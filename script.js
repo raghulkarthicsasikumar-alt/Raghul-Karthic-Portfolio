@@ -2,17 +2,17 @@
   "use strict";
 
   const PROJECTS = [
-    // stills first
+    // stills first — larger cards
     { id: "don", title: "Double Or Nothing", desc: "Writer · Director · DP · Editor · Colorist · Sound Designer — short film", roles: ["dp"], span: 7, size: "lg", tag: "Writer · Director · DP" },
     { id: "swey", title: "SWEY: See the World, See Yourself", desc: "Colorist · spec ad for Swey Collective · 2025", roles: ["colorist"], span: 5, size: "md" },
-    { id: "waiting", title: "The Waiting Room", desc: "Colorist · short film", roles: ["colorist"], span: 5, size: "sm" },
     { id: "kmb", title: "Kaise Main Batau", desc: "Colorist · VFX assistant · camera operator · for Dhi Harmony · 2025", roles: ["colorist"], span: 7, size: "md" },
-    // storyboards only
-    { id: "iow", title: "In Other Words, I Loved You", desc: "Storyboard artist · assembly editor", roles: ["editor"], span: 5, size: "sm" },
-    { id: "keeta", title: "Keeta — Spec Ad", desc: "Production designer · storyboard artist", roles: ["editor"], span: 7, size: "sm" },
+    { id: "waiting", title: "The Waiting Room", desc: "Colorist · short film", roles: ["colorist"], span: 5, size: "sm" },
+    // storyboards only — smallest cards
+    { id: "iow", title: "In Other Words, I Loved You", desc: "Storyboard artist · assembly editor", roles: ["editor"], span: 4, size: "sm" },
+    { id: "keeta", title: "Keeta — Spec Ad", desc: "Production designer · storyboard artist", roles: ["editor"], span: 4, size: "sm" },
+    { id: "rls", title: "Red Light Shadows", desc: "VFX artist · short film", roles: ["editor"], span: 4, size: "sm" },
     // no media yet
     { id: "house", title: "Housewarming", desc: "DOP · colorist · sound designer · short film", roles: ["dp"], span: 6, size: "lg" },
-    { id: "rls", title: "Red Light Shadows", desc: "VFX artist · short film", roles: ["editor"], span: 6, size: "sm" },
     { id: "dontleave", title: "Don't Leave", desc: "Sound recordist · color QC · short film", roles: ["colorist"], span: 6, size: "sm" }
   ];
 

@@ -32,7 +32,7 @@ html.has-cursor, html.has-cursor * { cursor: none !important; }
 .cursor-ring.hover { width: 56px; height: 56px; border-color: var(--red); background: rgba(217,21,58,.12); }
 
 .bg-fixed { position: fixed; inset: 0; z-index: -2; background: var(--bg); }
-#bg-waves { position: absolute; top: 0; left: 0; width: 100%; z-index: 0; pointer-events: none; opacity: .9; mix-blend-mode: screen; }
+#bg-waves { position: absolute; top: 0; left: 0; width: 100%; z-index: 0; pointer-events: none; opacity: 1; mix-blend-mode: screen; }
 .grain { position: fixed; inset: 0; z-index: 400; pointer-events: none; background-image: repeating-linear-gradient(0deg, rgba(0,0,0,.07) 0 1px, transparent 1px 3px); mix-blend-mode: multiply; opacity: .35; }
 
 @keyframes creep { from { transform: translateX(0); } to { transform: translateX(-50%); } }
@@ -60,7 +60,7 @@ html.has-cursor, html.has-cursor * { cursor: none !important; }
 .intro-sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(14px, 3vh, 30px); padding: 16px; }
 .intro-grid { position: absolute; inset: 0; background-image: repeating-linear-gradient(90deg, rgba(240,234,230,.05) 0 1px, transparent 1px 72px); pointer-events: none; }
 .intro-scanline { position: absolute; left: 0; right: 0; height: 45%; background: linear-gradient(180deg, transparent, rgba(227,232,210,.05), transparent); animation: scanline 5s linear infinite; pointer-events: none; }
-.intro-word { display: flex; justify-content: center; align-items: center; line-height: .8; font-family: 'Archivo Black', sans-serif; font-size: clamp(44px, 15vw, 190px); letter-spacing: -.03em; will-change: transform; }
+.intro-word { display: flex; justify-content: center; align-items: center; line-height: .8; font-family: 'Archivo Black', sans-serif; font-size: clamp(56px, 19vw, 260px); letter-spacing: -.03em; will-change: transform; }
 .intro-word span { display: inline-block; will-change: transform; transition: transform .05s linear; }
 .intro-sub { font-family: 'IBM Plex Mono', monospace; font-size: clamp(9px, 1.5vw, 12px); letter-spacing: .3em; text-transform: uppercase; color: var(--mint); text-align: center; transition: opacity .1s linear; }
 .intro-cta { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: clamp(10px, 3vh, 26px); }
@@ -87,7 +87,7 @@ html.has-cursor, html.has-cursor * { cursor: none !important; }
 .plate-b span { color: rgba(227,232,210,.66); }
 .plate-c { flex: 1 1 140px; min-height: 130px; background-image: repeating-linear-gradient(90deg, rgba(217,21,58,.22) 0 3px, transparent 3px 12px); border-color: rgba(217,21,58,.3); }
 .plate-c span { color: rgba(240,234,230,.62); }
-.hero-title { font-size: clamp(42px, 12vw, 176px); line-height: .82; letter-spacing: -.045em; text-transform: uppercase; text-wrap: balance; margin-bottom: clamp(18px, 2.6vw, 32px); }
+.hero-title { font-size: clamp(50px, 15vw, 220px); line-height: .8; letter-spacing: -.045em; text-transform: uppercase; text-wrap: balance; margin-bottom: clamp(18px, 2.6vw, 32px); }
 .hero-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: stretch; }
 .hero-copy { flex: 2 1 min(100%, 300px); display: flex; flex-direction: column; gap: 20px; justify-content: flex-end; }
 .hero-copy p { font-size: clamp(15px, 1.4vw, 18px); line-height: 1.62; font-weight: 300; color: rgba(240,234,230,.85); }
@@ -104,7 +104,7 @@ html.has-cursor, html.has-cursor * { cursor: none !important; }
 .manifesto { position: relative; padding: clamp(64px, 10vw, 130px) 16px; background: var(--red); }
 .manifesto .wrap { display: flex; flex-direction: column; gap: clamp(22px, 3vw, 40px); }
 .eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: var(--mint); display: block; }
-.manifesto h2 { font-size: clamp(38px, 9vw, 128px); line-height: .86; letter-spacing: -.045em; text-transform: uppercase; text-wrap: balance; }
+.manifesto h2 { font-size: clamp(44px, 11vw, 156px); line-height: .84; letter-spacing: -.045em; text-transform: uppercase; text-wrap: balance; }
 .manifesto-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: clamp(24px, 3vw, 44px); }
 .manifesto-grid p { font-size: clamp(17px, 2vw, 26px); line-height: 1.52; font-weight: 300; color: rgba(240,234,230,.9); }
 .pull-quote { border-left: 2px solid var(--mint); padding-left: clamp(16px, 2vw, 26px); max-width: 760px; animation: floaty 7s ease-in-out infinite; }
@@ -118,7 +118,7 @@ html.has-cursor, html.has-cursor * { cursor: none !important; }
 .work { position: relative; padding: clamp(60px, 9vw, 110px) 16px; }
 .work .wrap { display: flex; flex-direction: column; gap: clamp(22px, 3vw, 38px); }
 .work-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
-.work-head h2 { font-size: clamp(42px, 10vw, 150px); line-height: .82; letter-spacing: -.05em; text-transform: uppercase; }
+.work-head h2 { font-size: clamp(48px, 12vw, 180px); line-height: .8; letter-spacing: -.05em; text-transform: uppercase; }
 .filters { display: flex; gap: 6px; flex-wrap: wrap; }
 .filter-btn { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; padding: 11px 15px; border: 1px solid rgba(240,234,230,.24); cursor: pointer; transition: border-color .2s ease, color .2s ease; }
 .filter-btn:hover, .filter-btn.active { border-color: var(--mint); color: var(--mint); }
@@ -139,7 +139,7 @@ html.has-cursor, html.has-cursor * { cursor: none !important; }
 .journal { position: relative; padding: clamp(60px, 9vw, 110px) 16px; background: var(--red); }
 .journal .wrap { display: flex; flex-direction: column; gap: clamp(22px, 3vw, 36px); }
 .journal .eyebrow { color: rgba(240,234,230,.75); }
-.journal h2 { font-size: clamp(42px, 10vw, 150px); line-height: .8; letter-spacing: -.05em; text-transform: uppercase; }
+.journal h2 { font-size: clamp(48px, 12vw, 180px); line-height: .78; letter-spacing: -.05em; text-transform: uppercase; }
 .journal-intro { max-width: 560px; font-size: clamp(15px, 1.5vw, 17px); line-height: 1.6; font-weight: 300; color: rgba(240,234,230,.9); }
 .tag-row { display: flex; gap: 8px; flex-wrap: wrap; }
 .tag { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; padding: 9px 13px; border: 1px solid rgba(240,234,230,.4); color: rgba(240,234,230,.9); }

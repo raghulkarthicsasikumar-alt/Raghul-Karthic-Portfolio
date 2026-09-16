@@ -102,13 +102,15 @@
       const introH = introSection.offsetHeight - window.innerHeight;
       const introProgress = introH > 0 ? Math.min(1, Math.max(0, scrollTop / introH)) : 0;
       letters.forEach((span, i) => {
-        const delay = i * 0.06;
-        const local = Math.min(1, Math.max(0, (introProgress - delay) / 0.5));
-        const y = (1 - local) * 40;
-        const rot = (1 - local) * (i % 2 === 0 ? -6 : 6);
-        span.style.transform = `translateY(${y}px) rotate(${rot}deg)`;
+        const delay = i * 0.035;
+        const local = Math.min(1, Math.max(0, (introProgress - delay) / 0.22));
+        const eased = 1 - Math.pow(1 - local, 3);
+        const y = (1 - eased) * 140;
+        const rot = (1 - eased) * (i % 2 === 0 ? -22 : 22);
+        const scale = 0.55 + eased * 0.45;
+        span.style.transform = `translateY(${y}px) rotate(${rot}deg) scale(${scale})`;
       });
-      introSub.style.opacity = Math.min(1, introProgress * 2.2).toFixed(2);
+      introSub.style.opacity = Math.min(1, introProgress * 4).toFixed(2);
 
       // active nav section highlight
       const headerH = $(".site-header").offsetHeight;
@@ -267,7 +269,7 @@
       lastMove = performance.now();
     }, { passive: true });
 
-    let t = 0, speed = 0.18;
+    let t = 0, speed = 0.4;
     const bandColorA = "217,21,58";
     const bandColorB = "150,180,140";
 
@@ -277,7 +279,7 @@
       const w = canvas.width, h = canvas.height;
       if (!w || !h) return;
       const active = performance.now() - lastMove < 1200;
-      const target = active ? 1 : 0.18;
+      const target = active ? 1.6 : 0.4;
       speed += (target - speed) * 0.04;
       t += (1 / 60) * speed;
 
@@ -287,15 +289,15 @@
         const baseY = (i + 0.5) * (h / bandCount);
         const color = i % 2 === 0 ? bandColorA : bandColorB;
         ctx.beginPath();
-        ctx.strokeStyle = `rgba(${color},${0.12 + (i % 3) * 0.03})`;
-        ctx.lineWidth = 1.4;
+        ctx.strokeStyle = `rgba(${color},${0.32 + (i % 3) * 0.06})`;
+        ctx.lineWidth = 3.2;
         const step = 24;
         for (let x = 0; x <= w; x += step) {
           const distToMouse = Math.hypot(x - mouse.x, baseY - mouse.y);
           const mouseInfluence = Math.max(0, 1 - distToMouse / 420) * 26;
           const y = baseY
-            + Math.sin(x * 0.006 + t * 1.4 + i) * 18
-            + Math.sin(x * 0.002 - t * 0.6 + i * 2) * 30
+            + Math.sin(x * 0.006 + t * 1.4 + i) * 26
+            + Math.sin(x * 0.002 - t * 0.6 + i * 2) * 42
             - mouseInfluence;
           if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         }

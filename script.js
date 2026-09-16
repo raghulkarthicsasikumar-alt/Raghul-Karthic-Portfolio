@@ -192,22 +192,20 @@
 
   function startCardSlideshows(list) {
     if (!hasMedia) return;
-    list.forEach((p) => {
-      const panels = projectMedia(p.id).panels || [];
-      if (panels.length < 2) return;
-      const el = $("#cardMedia-" + p.id);
-      if (!el) return;
-      let idx = 0;
-      const timer = setInterval(() => {
-        idx = (idx + 1) % panels.length;
-        el.style.opacity = 0;
-        setTimeout(() => {
-          applyDriveBackground(el, panels[idx].img);
-          el.style.opacity = 1;
-        }, 200);
-      }, 2600);
-      cardSlideTimers.push(timer);
-    });
+    const items = list
+      .map((p) => ({ id: p.id, panels: projectMedia(p.id).panels || [] }))
+      .filter((x) => x.panels.length > 1);
+    if (!items.length) return;
+    let tick = 0;
+    const timer = setInterval(() => {
+      tick++;
+      items.forEach(({ id, panels }) => {
+        const el = $("#cardMedia-" + id);
+        if (!el) return;
+        applyDriveBackground(el, panels[tick % panels.length].img);
+      });
+    }, 2600);
+    cardSlideTimers.push(timer);
   }
 
   function renderGallery(filter) {

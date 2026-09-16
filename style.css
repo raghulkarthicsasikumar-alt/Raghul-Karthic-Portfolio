@@ -133,7 +133,7 @@ html.has-cursor, html.has-cursor * { cursor: none !important; }
 .gallery { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(14px, 1.8vw, 22px); align-items: start; }
 .card { display: flex; flex-direction: column; gap: 12px; cursor: pointer; transition: transform .25s ease, opacity .5s ease; }
 .card:hover { transform: translateY(-4px); }
-.card-media { aspect-ratio: 16/9; background: var(--bg); border: 1px solid rgba(240,234,230,.16); position: relative; display: flex; align-items: flex-end; justify-content: space-between; padding: 14px; transition: border-color .25s ease, opacity .3s ease; }
+.card-media { aspect-ratio: 16/9; background: var(--bg); border: 1px solid rgba(240,234,230,.16); position: relative; display: flex; align-items: flex-end; justify-content: space-between; padding: 14px; transition: border-color .25s ease; }
 .card:hover .card-media { border-color: var(--red); }
 .card-plate-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: rgba(240,234,230,.5); }
 .card-tag { position: absolute; bottom: 12px; right: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--red); }

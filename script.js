@@ -82,10 +82,6 @@
   /* ---------------- Scroll progress + active nav + kinetic intro ---------------- */
   function initScrollFx() {
     const progressFill = $("#progressFill");
-    const introWord = $("#introWord");
-    const introSub = $("#introSub");
-    const letters = $$("#introWord span");
-    const introSection = $("#act-intro");
     const navLinks = $$(".nav-link");
     const sections = ["act-hero", "act-manifesto", "act-work", "act-journal", "act-contact"].map((id) => document.getElementById(id));
 
@@ -97,20 +93,6 @@
       const max = doc.scrollHeight - doc.clientHeight;
       const pct = max > 0 ? Math.min(1, scrollTop / max) : 0;
       progressFill.style.width = (pct * 100).toFixed(2) + "%";
-
-      // kinetic intro: progress through the intro section's sticky range
-      const introH = introSection.offsetHeight - window.innerHeight;
-      const introProgress = introH > 0 ? Math.min(1, Math.max(0, scrollTop / introH)) : 0;
-      letters.forEach((span, i) => {
-        const delay = i * 0.035;
-        const local = Math.min(1, Math.max(0, (introProgress - delay) / 0.22));
-        const eased = 1 - Math.pow(1 - local, 3);
-        const y = (1 - eased) * 140;
-        const rot = (1 - eased) * (i % 2 === 0 ? -22 : 22);
-        const scale = 0.55 + eased * 0.45;
-        span.style.transform = `translateY(${y}px) rotate(${rot}deg) scale(${scale})`;
-      });
-      introSub.style.opacity = Math.min(1, introProgress * 4).toFixed(2);
 
       // active nav section highlight
       const headerH = $(".site-header").offsetHeight;
@@ -207,11 +189,11 @@
     $("#detailTitle").textContent = p.title;
     $("#detailDesc").textContent = p.desc;
     $("#detailMedia").innerHTML = `
-      <div class="plate-block" style="flex:3 1 min(100%,360px); aspect-ratio:3/2;"></div>
-      <div class="plate-block" style="flex:2 1 min(100%,220px); aspect-ratio:4/5;"></div>
-      <div class="plate-block" style="flex:2 1 min(100%,200px); aspect-ratio:1/1;"></div>
+      <div class="plate-block" style="flex:3 1 min(100%,360px); aspect-ratio:16/9;"></div>
+      <div class="plate-block" style="flex:2 1 min(100%,220px); aspect-ratio:16/9;"></div>
+      <div class="plate-block" style="flex:2 1 min(100%,200px); aspect-ratio:16/9;"></div>
       <div class="plate-block" style="flex:4 1 min(100%,400px); aspect-ratio:16/9;"></div>
-      <div class="plate-block" style="flex:1 1 min(100%,160px); aspect-ratio:3/4;"></div>`;
+      <div class="plate-block" style="flex:1 1 min(100%,160px); aspect-ratio:16/9;"></div>`;
     window.scrollTo({ top: 0, behavior: "auto" });
     requestAnimationFrame(() => $$(".reveal-up, .reveal-scale", detail).forEach((el) => el.classList.add("in-view")));
   }
@@ -250,6 +232,25 @@
     const ctx = canvas.getContext("2d");
     let mouse = { x: -9999, y: -9999 };
     let lastMove = 0;
+    let bands = [];
+
+    function seedBands() {
+      const h = canvas.height || window.innerHeight;
+      const bandCount = Math.max(5, Math.ceil(h / 340));
+      bands = [];
+      for (let i = 0; i < bandCount; i++) {
+        bands.push({
+          offset: Math.random(),
+          angle: (Math.random() * 2 - 1) * 0.55,
+          freq1: 0.003 + Math.random() * 0.006,
+          freq2: 0.0012 + Math.random() * 0.0022,
+          amp1: 22 + Math.random() * 26,
+          amp2: 30 + Math.random() * 40,
+          dir: Math.random() < 0.5 ? -1 : 1,
+          phase: Math.random() * Math.PI * 2
+        });
+      }
+    }
 
     function resize() {
       const w = window.innerWidth, h = document.documentElement.scrollHeight;
@@ -257,6 +258,7 @@
         canvas.width = w;
         canvas.height = h;
         canvas.style.height = h + "px";
+        seedBands();
       }
     }
     window.addEventListener("resize", resize);
@@ -278,31 +280,37 @@
       if (prefersReducedMotion) return;
       const w = canvas.width, h = canvas.height;
       if (!w || !h) return;
+      if (!bands.length) seedBands();
       const active = performance.now() - lastMove < 1200;
       const target = active ? 1.6 : 0.4;
       speed += (target - speed) * 0.04;
       t += (1 / 60) * speed;
 
       ctx.clearRect(0, 0, w, h);
-      const bandCount = Math.max(4, Math.ceil(h / 420));
-      for (let i = 0; i < bandCount; i++) {
-        const baseY = (i + 0.5) * (h / bandCount);
+      bands.forEach((band, i) => {
+        const baseY = (band.offset) * h;
         const color = i % 2 === 0 ? bandColorA : bandColorB;
+        ctx.save();
+        ctx.translate(w / 2, baseY);
+        ctx.rotate(band.angle);
         ctx.beginPath();
-        ctx.strokeStyle = `rgba(${color},${0.32 + (i % 3) * 0.06})`;
-        ctx.lineWidth = 3.2;
-        const step = 24;
-        for (let x = 0; x <= w; x += step) {
-          const distToMouse = Math.hypot(x - mouse.x, baseY - mouse.y);
-          const mouseInfluence = Math.max(0, 1 - distToMouse / 420) * 26;
-          const y = baseY
-            + Math.sin(x * 0.006 + t * 1.4 + i) * 26
-            + Math.sin(x * 0.002 - t * 0.6 + i * 2) * 42
+        ctx.strokeStyle = `rgba(${color},${0.34 + (i % 3) * 0.07})`;
+        ctx.lineWidth = 4.6;
+        ctx.lineCap = "round";
+        const span = Math.max(w, h) * 1.3;
+        const step = 26;
+        const tt = t * band.dir;
+        for (let x = -span; x <= span; x += step) {
+          const distToMouse = Math.hypot(x + w / 2 - mouse.x, baseY - mouse.y);
+          const mouseInfluence = Math.max(0, 1 - distToMouse / 420) * 30;
+          const y = Math.sin(x * band.freq1 + tt * 1.4 + band.phase) * band.amp1
+            + Math.sin(x * band.freq2 - tt * 0.6 + band.phase * 2) * band.amp2
             - mouseInfluence;
-          if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+          if (x === -span) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         }
         ctx.stroke();
-      }
+        ctx.restore();
+      });
     }
     requestAnimationFrame(frame);
   }

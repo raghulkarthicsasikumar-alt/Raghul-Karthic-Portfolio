@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Montserrat:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; background: rgb(26,18,19); scroll-behavior: smooth; }
+  * { box-sizing: border-box; min-width: 0; }
+  a { color: #D9153A; text-decoration: none; }
+  a:hover { color: #E3E8D2; }
+  ::selection { background: #D9153A; color: #F0EAE6; }
+  @keyframes creep { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @keyframes breathe { 0%,100% { opacity: .4; } 50% { opacity: 1; } }
+  @keyframes scanline { from { transform: translateY(-120%); } to { transform: translateY(120%); } }
+  @keyframes floaty { 0%,100% { transform: translateY(0) rotate(-0.4deg); } 50% { transform: translateY(-10px) rotate(0.4deg); } }
+</style>
+</helmet>
+
+<div style="background: transparent; color: #F0EAE6; font-family: 'Montserrat', system-ui, sans-serif; position: relative; overflow-x: clip;">
+
+  <div style="position: fixed; inset: 0; z-index: -2; background: {{ bgColor }};"></div>
+  <canvas id="bg-waves" style="position: absolute; top: 0; left: 0; width: 100%; z-index: 0; pointer-events: none; opacity: .9; mix-blend-mode: screen;"></canvas>
+
+  <sc-if value="{{ grainOn }}" hint-placeholder-val="{{ true }}">
+    <div style="position: fixed; inset: 0; z-index: 400; pointer-events: none; background-image: repeating-linear-gradient(0deg, rgba(0,0,0,.07) 0 1px, transparent 1px 3px); mix-blend-mode: multiply; opacity: .35;"></div>
+  </sc-if>
+
+  <header style="position: sticky; top: 0; z-index: 300; background: rgba(26,18,19,.9); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(240,234,230,.12);">
+    <div style="max-width: 1440px; margin: 0 auto; padding: 12px 16px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+      <div onClick="{{ goTop }}" style="font-family: 'Archivo Black', sans-serif; font-size: clamp(16px, 2.4vw, 20px); letter-spacing: -.02em; cursor: pointer; white-space: nowrap;">RAGHUL<span style="color: #D9153A;">.</span></div>
+      <nav style="display: flex; gap: 2px; flex-wrap: wrap; margin-left: auto; align-items: center;">
+        <div onClick="{{ goWork }}" style="position: relative; padding: 10px 12px; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #F0EAE6;" style-hover="color: #E3E8D2;">
+          Work<sc-if value="{{ atWork }}"><span style="position: absolute; left: 12px; right: 12px; bottom: 4px; height: 2px; background: #D9153A;"></span></sc-if>
+        </div>
+        <div onClick="{{ goAbout }}" style="position: relative; padding: 10px 12px; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #F0EAE6;" style-hover="color: #E3E8D2;">
+          About<sc-if value="{{ atAbout }}"><span style="position: absolute; left: 12px; right: 12px; bottom: 4px; height: 2px; background: #D9153A;"></span></sc-if>
+        </div>
+        <div onClick="{{ goJournal }}" style="position: relative; padding: 10px 12px; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #F0EAE6;" style-hover="color: #E3E8D2;">
+          Journal<sc-if value="{{ atJournal }}"><span style="position: absolute; left: 12px; right: 12px; bottom: 4px; height: 2px; background: #D9153A;"></span></sc-if>
+        </div>
+        <div onClick="{{ goContact }}" style="position: relative; padding: 10px 12px; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #F0EAE6;" style-hover="color: #E3E8D2;">
+          Contact<sc-if value="{{ atContact }}"><span style="position: absolute; left: 12px; right: 12px; bottom: 4px; height: 2px; background: #D9153A;"></span></sc-if>
+        </div>
+      </nav>
+    </div>
+    <div style="height: 2px; background: rgba(240,234,230,.1);">
+      <div style="height: 2px; background: #D9153A; width: {{ scrollPct }};"></div>
+    </div>
+  </header>
+
+  <sc-if value="{{ !hasDetail }}" hint-placeholder-val="{{ true }}">
+  <div>
+
+  <section id="act-intro" data-screen-label="01 Kinetic intro" style="position: relative; height: 240vh;">
+    <div style="position: sticky; top: 0; height: 100vh; overflow: hidden; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(14px, 3vh, 30px); padding: 16px;">
+      <div style="position: absolute; inset: 0; background-image: repeating-linear-gradient(90deg, rgba(240,234,230,.05) 0 1px, transparent 1px 72px); pointer-events: none;"></div>
+      <div style="position: absolute; left: 0; right: 0; height: 45%; background: linear-gradient(180deg, transparent, rgba(227,232,210,.05), transparent); animation: scanline 5s linear infinite; pointer-events: none;"></div>
+
+      <div style="display: flex; justify-content: center; align-items: center; line-height: .8; font-family: 'Archivo Black', sans-serif; font-size: clamp(44px, 15vw, 190px); letter-spacing: -.03em; color: #F0EAE6; will-change: transform;">
+        <span style="display: inline-block; transform: {{ l0 }};">R</span>
+        <span style="display: inline-block; transform: {{ l1 }}; color: #D9153A;">A</span>
+        <span style="display: inline-block; transform: {{ l2 }};">G</span>
+        <span style="display: inline-block; transform: {{ l3 }};">H</span>
+        <span style="display: inline-block; transform: {{ l4 }};">U</span>
+        <span style="display: inline-block; transform: {{ l5 }};">L</span>
+      </div>
+
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: clamp(9px, 1.5vw, 12px); letter-spacing: .3em; text-transform: uppercase; color: #E3E8D2; opacity: {{ subOpacity }}; text-align: center;">Cinematography · Color · Craft</div>
+
+      <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: clamp(10px, 3vh, 26px);">
+        <button onClick="{{ goWork }}" style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; background: #D9153A; color: #F0EAE6; border: none; padding: 14px 20px; cursor: pointer;" style-hover="background: #F0EAE6; color: #241B1C;">Skip to work →</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="act-hero" data-screen-label="02 Hero collage" style="position: relative; padding: clamp(56px, 9vw, 110px) 16px clamp(40px, 7vw, 80px);">
+    <div style="max-width: 1440px; margin: 0 auto; display: flex; flex-direction: column; gap: clamp(18px, 2.6vw, 32px);">
+
+      <div style="display: flex; flex-wrap: wrap; gap: 14px;">
+        <div style="flex: 3 1 min(100%, 520px); aspect-ratio: 16/9; background: #1A1213; background-image: repeating-linear-gradient(135deg, rgba(240,234,230,.07) 0 2px, transparent 2px 9px); border: 1px solid rgba(240,234,230,.14); display: flex; align-items: flex-end; padding: 14px; transform: {{ parallaxA }};">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: rgba(240,234,230,.5);">reel still — 2.39:1 · anamorphic night ext.</span>
+        </div>
+        <div style="flex: 2 1 min(100%, 280px); display: flex; flex-direction: column; gap: 14px;">
+          <div style="flex: 1 1 140px; background: #2E2324; background-image: repeating-linear-gradient(45deg, rgba(227,232,210,.09) 0 2px, transparent 2px 8px); border: 1px solid rgba(227,232,210,.18); display: flex; align-items: flex-end; padding: 12px; min-height: 130px; transform: {{ parallaxB }};">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: rgba(227,232,210,.66);">motion clip — grade a/b wipe</span>
+          </div>
+          <div style="flex: 1 1 140px; background: #1A1213; background-image: repeating-linear-gradient(90deg, rgba(217,21,58,.22) 0 3px, transparent 3px 12px); border: 1px solid rgba(217,21,58,.3); display: flex; align-items: flex-end; padding: 12px; min-height: 130px;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: rgba(240,234,230,.62);">texture plate — 16mm emulsion scan</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="reveal-hero-h1" style="{{ revealHeroH1 }}">
+      <h1 style="font-family: 'Archivo Black', sans-serif; font-size: clamp(42px, 12vw, 176px); line-height: .82; letter-spacing: -.045em; margin: 0; text-transform: uppercase; text-wrap: balance;">
+        Light <span style="color: #D9153A;">bends</span> for a living
+      </h1>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 14px; align-items: stretch;">
+        <div style="flex: 2 1 min(100%, 300px); display: flex; flex-direction: column; gap: 20px; justify-content: flex-end;">
+          <p style="font-size: clamp(15px, 1.4vw, 18px); line-height: 1.62; font-weight: 300; color: rgba(240,234,230,.85); margin: 0;">
+            Raghul Karthic Sasikumar is a UAE-based multidisciplinary visual artist working across cinematography, editing, color and VFX. Three years of narrative, branded and live-event work.
+          </p>
+          <div onClick="{{ goWork }}" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; background: #D9153A; padding: 15px 22px; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .2em; text-transform: uppercase;" style-hover="background: #F0EAE6; color: #241B1C;">See the work <span>→</span></div>
+        </div>
+        <div style="flex: 1 1 min(100%, 210px); min-height: 200px; background: #1A1213; background-image: repeating-linear-gradient(160deg, rgba(240,234,230,.06) 0 2px, transparent 2px 10px); border: 1px solid rgba(240,234,230,.12); display: flex; align-items: flex-end; padding: 12px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: rgba(240,234,230,.5);">portrait — on set, dusk</span>
+        </div>
+        <div style="flex: 1 1 min(100%, 200px); min-height: 200px; background: #2E2324; background-image: repeating-linear-gradient(20deg, rgba(240,234,230,.07) 0 2px, transparent 2px 7px); border: 1px solid rgba(240,234,230,.12);"></div>
+        <div style="flex: 1 1 min(100%, 200px); min-height: 200px; border: 1px solid rgba(227,232,210,.28); padding: 16px; display: flex; flex-direction: column; justify-content: space-between; gap: 14px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #E3E8D2; animation: breathe 3.4s ease-in-out infinite;">● open for freelance</span>
+          <span style="font-family: 'Archivo Black', sans-serif; font-size: clamp(30px, 4vw, 46px); line-height: .9; letter-spacing: -.03em;">3<span style="color: #D9153A;">yr</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin: clamp(48px, 7vw, 86px) -16px 0; border-top: 1px solid rgba(240,234,230,.12); border-bottom: 1px solid rgba(240,234,230,.12); overflow: hidden; padding: 14px 0; background: #1A1213;">
+      <div style="display: flex; width: max-content; animation: creep 30s linear infinite; font-family: 'Archivo Black', sans-serif; font-size: clamp(22px, 4vw, 52px); letter-spacing: -.02em; text-transform: uppercase; white-space: nowrap; gap: 30px;">
+        <span>Director</span><span style="color: #D9153A;">·</span><span>Cinematographer</span><span style="color: #E3E8D2;">·</span><span>Colorist</span><span style="color: #D9153A;">·</span><span>Editor</span><span style="color: #E3E8D2;">·</span><span>Sound Designer</span><span style="color: #D9153A;">·</span><span>VFX Artist</span><span style="color: #E3E8D2;">·</span><span>Storyboard Artist</span><span style="color: #D9153A;">·</span>
+        <span>Director</span><span style="color: #D9153A;">·</span><span>Cinematographer</span><span style="color: #E3E8D2;">·</span><span>Colorist</span><span style="color: #D9153A;">·</span><span>Editor</span><span style="color: #E3E8D2;">·</span><span>Sound Designer</span><span style="color: #D9153A;">·</span><span>VFX Artist</span><span style="color: #E3E8D2;">·</span><span>Storyboard Artist</span><span style="color: #D9153A;">·</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="act-manifesto" data-screen-label="03 Manifesto" style="position: relative; padding: clamp(64px, 10vw, 130px) 16px; background: #D9153A;">
+    <div style="max-width: 1040px; margin: 0 auto; display: flex; flex-direction: column; gap: clamp(22px, 3vw, 40px);">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: #E3E8D2;">Manifesto · 001</span>
+      <div id="reveal-manifesto-h2" style="{{ revealManifestoH2 }}">
+      <h2 style="font-family: 'Archivo Black', sans-serif; font-size: clamp(38px, 9vw, 128px); line-height: .86; letter-spacing: -.045em; text-transform: uppercase; margin: 0; text-wrap: balance;">
+        A frame is an <span style="color: #E3E8D2;">argument</span>
+      </h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: clamp(24px, 3vw, 44px);">
+        <p style="font-size: clamp(17px, 2vw, 26px); line-height: 1.52; font-weight: 300; margin: 0; color: rgba(240,234,230,.9);">
+          I don't believe in neutral images. Every exposure decision is a claim about what deserves attention and what can be allowed to fall away into the dark. The grade is where that claim becomes <span style="color: #E3E8D2;">undeniable</span>.
+        </p>
+        <p style="font-size: clamp(17px, 2vw, 26px); line-height: 1.52; font-weight: 300; margin: 0; color: rgba(240,234,230,.9);">
+          So I work backwards from the argument. Lens, movement, palette, cut — none of it is style for its own sake. If a choice can't defend itself in the edit, it leaves. What survives is the only thing worth showing you.
+        </p>
+      </div>
+      <div style="border-left: 2px solid #E3E8D2; padding-left: clamp(16px, 2vw, 26px); max-width: 760px; animation: floaty 7s ease-in-out infinite;">
+        <p style="font-family: 'Archivo Black', sans-serif; font-size: clamp(22px, 3.6vw, 48px); line-height: 1.04; letter-spacing: -.03em; margin: 0; text-transform: uppercase;">Make it specific or don't make it.</p>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: 1px; background: rgba(240,234,230,.14); margin-top: clamp(10px, 2vw, 26px);">
+        <div style="background: #1A1213; padding: 22px 18px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: rgba(240,234,230,.5);">Based</div>
+          <div style="margin-top: 10px; font-size: 16px; font-weight: 500;">Dubai, UAE</div>
+        </div>
+        <div style="background: #1A1213; padding: 22px 18px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: rgba(240,234,230,.5);">Cameras</div>
+          <div style="margin-top: 10px; font-size: 16px; font-weight: 500;">BMPCC 4K/6K · URSA Mini Pro 6K · Sony FX3/FX6 · RED Komodo</div>
+        </div>
+        <div style="background: #1A1213; padding: 22px 18px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: rgba(240,234,230,.5);">Suite</div>
+          <div style="margin-top: 10px; font-size: 16px; font-weight: 500;">DaVinci Resolve · Adobe Suite · Blender</div>
+        </div>
+        <div style="background: #1A1213; padding: 22px 18px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: #E3E8D2;">Status</div>
+          <div style="margin-top: 10px; font-size: 16px; font-weight: 500; color: #E3E8D2;">Open for freelance work</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="act-work" data-screen-label="04 Work gallery" style="position: relative; padding: clamp(60px, 9vw, 110px) 16px;">
+    <div style="max-width: 1440px; margin: 0 auto; display: flex; flex-direction: column; gap: clamp(22px, 3vw, 38px);">
+      <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
+        <div id="reveal-work-h2" style="{{ revealWorkH2 }}">
+        <h2 style="font-family: 'Archivo Black', sans-serif; font-size: clamp(42px, 10vw, 150px); line-height: .82; letter-spacing: -.05em; text-transform: uppercase; margin: 0;">
+          Selected<br /><span style="color: #D9153A;">work</span>
+        </h2>
+        </div>
+        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+          <div onClick="{{ filterAll }}" style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; padding: 11px 15px; border: 1px solid rgba(240,234,230,.24); cursor: pointer;" style-hover="border-color: #E3E8D2; color: #E3E8D2;">All 09</div>
+          <div onClick="{{ filterColorist }}" style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; padding: 11px 15px; border: 1px solid rgba(240,234,230,.24); cursor: pointer;" style-hover="border-color: #E3E8D2; color: #E3E8D2;">Colorist</div>
+          <div onClick="{{ filterDp }}" style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; padding: 11px 15px; border: 1px solid rgba(240,234,230,.24); cursor: pointer;" style-hover="border-color: #E3E8D2; color: #E3E8D2;">DP</div>
+          <div onClick="{{ filterEditor }}" style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; padding: 11px 15px; border: 1px solid rgba(240,234,230,.24); cursor: pointer;" style-hover="border-color: #E3E8D2; color: #E3E8D2;">Editor/VFX</div>
+        </div>
+      </div>
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: #D9153A;">Filter: {{ roleLabel }} — click any project for stills &amp; the reel</div>
+
+      <div style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(14px, 1.8vw, 22px); align-items: start;">
+
+        <sc-if value="{{ showDp }}" hint-placeholder-val="{{ true }}">
+          <div id="reveal-g1" onClick="{{ openDon }}" style="{{ revealG1 }} grid-column: span 7; display: flex; flex-direction: column; gap: 14px; cursor: pointer; transition: transform .25s ease;" style-hover="transform: translateY(-4px);">
+            <div style="aspect-ratio: 16/9; background: #1A1213; background-image: repeating-linear-gradient(135deg, rgba(240,234,230,.07) 0 2px, transparent 2px 9px); border: 1px solid rgba(240,234,230,.16); display: flex; align-items: flex-end; justify-content: space-between; padding: 14px; transition: border-color .25s ease;" style-hover="border-color: #D9153A;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: rgba(240,234,230,.42);">key still — 2.39:1</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #D9153A;">view project →</span>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+              <span style="background: #D9153A; padding: 8px 14px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .2em; text-transform: uppercase;">Writer · Director · DP</span>
+            </div>
+            <h3 style="font-family: 'Archivo Black', sans-serif; font-size: clamp(26px, 4.4vw, 58px); line-height: .92; letter-spacing: -.035em; text-transform: uppercase; margin: 0;">Double Or Nothing</h3>
+            <p style="font-size: 14px; font-weight: 300; color: rgba(240,234,230,.7); margin: 0;">Short film · also editor, colorist &amp; sound designer</p>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showColorist }}" hint-placeholder-val="{{ true }}">
+          <div id="reveal-g2" onClick="{{ openSwey }}" style="{{ revealG2 }} grid-column: span 5; display: flex; flex-direction: column; gap: 12px; cursor: pointer; transition: transform .25s ease;" style-hover="transform: translateY(-4px);">
+            <div style="aspect-ratio: 16/9; background: #2E2324; background-image: repeating-linear-gradient(45deg, rgba(217,21,58,.2) 0 2px, transparent 2px 10px); border: 1px solid rgba(217,21,58,.3); position: relative; transition: border-color .25s ease;" style-hover="border-color: #D9153A;"><span style="position: absolute; bottom: 12px; right: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #D9153A;">view →</span></div>
+            <h3 style="font-family: 'Archivo Black', sans-serif; font-size: clamp(18px, 2.2vw, 28px); line-height: .98; letter-spacing: -.02em; text-transform: uppercase; margin: 0;">SWEY: See the World, See Yourself</h3>
+            <p style="font-size: 13px; font-weight: 300; color: rgba(240,234,230,.65); margin: 0;">Colorist · spec ad for Swey Collective · 2025</p>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showEditor }}">
+          <div id="reveal-g3" onClick="{{ openIow }}" style="{{ revealG3 }} grid-column: span 4; display: flex; flex-direction: column; gap: 10px; cursor: pointer; transition: transform .25s ease;" style-hover="transform: translateY(-4px);">
+            <div style="aspect-ratio: 16/9; background: #1A1213; background-image: repeating-linear-gradient(90deg, rgba(240,234,230,.06) 0 2px, transparent 2px 8px); border: 1px solid rgba(240,234,230,.12); position: relative; transition: border-color .25s ease;" style-hover="border-color: #D9153A;"><span style="position: absolute; bottom: 10px; right: 10px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #D9153A;">view →</span></div>
+            <h3 style="font-family: 'Archivo Black', sans-serif; font-size: 19px; text-transform: uppercase; letter-spacing: -.01em; margin: 0;">In Other Words, I Loved You</h3>
+            <p style="font-size: 12px; font-weight: 300; color: rgba(240,234,230,.6); margin: 0;">Storyboard artist · assembly editor</p>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showColorist }}">
+          <div id="reveal-g4" onClick="{{ openKmb }}" style="{{ revealG4 }} grid-column: span 8; display: flex; flex-direction: column; gap: 12px; cursor: pointer; transition: transform .25s ease;" style-hover="transform: translateY(-4px);">
+            <div style="aspect-ratio: 16/9; background: #1A1213; background-image: repeating-linear-gradient(160deg, rgba(227,232,210,.1) 0 2px, transparent 2px 11px); border: 1px solid rgba(227,232,210,.22); position: relative; transition: border-color .25s ease;" style-hover="border-color: #D9153A;"><span style="position: absolute; bottom: 12px; right: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #D9153A;">view project →</span></div>
+            <h3 style="font-family: 'Archivo Black', sans-serif; font-size: clamp(22px, 3.2vw, 42px); line-height: .94; letter-spacing: -.03em; text-transform: uppercase; margin: 0;">Kaise Main Batau</h3>
+            <p style="font-size: 13px; font-weight: 300; color: rgba(240,234,230,.68); margin: 0;">Colorist · VFX assistant · camera operator · for Dhi Harmony · 2025</p>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showDp }}">
+          <div id="reveal-g5" onClick="{{ openHouse }}" style="{{ revealG5 }} grid-column: span 6; display: flex; flex-direction: column; gap: 12px; cursor: pointer; transition: transform .25s ease;" style-hover="transform: translateY(-4px);">
+            <div style="aspect-ratio: 16/9; background: #1A1213; background-image: repeating-linear-gradient(135deg, rgba(217,21,58,.16) 0 3px, transparent 3px 14px); border: 1px solid rgba(217,21,58,.26); position: relative; transition: border-color .25s ease;" style-hover="border-color: #D9153A;"><span style="position: absolute; bottom: 12px; right: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #D9153A;">view project →</span></div>
+            <h3 style="font-family: 'Archivo Black', sans-serif; font-size: clamp(24px, 4vw, 50px); line-height: .92; letter-spacing: -.035em; text-transform: uppercase; margin: 0;">Housewarming</h3>
+            <p style="font-size: 13px; font-weight: 300; color: rgba(240,234,230,.68); margin: 0;">DOP · colorist · sound designer · short film</p>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showEditor }}">
+          <div id="reveal-g6" onClick="{{ openRls }}" style="{{ revealG6 }} grid-column: span 3; display: flex; flex-direction: column; gap: 10px; cursor: pointer; transition: transform .25s ease;" style-hover="transform: translateY(-4px);">
+            <div style="aspect-ratio: 16/9; background: #2E2324; background-image: repeating-linear-gradient(60deg, rgba(240,234,230,.07) 0 2px, transparent 2px 6px); border: 1px solid rgba(240,234,230,.12); position: relative; transition: border-color .25s ease;" style-hover="border-color: #D9153A;"><span style="position: absolute; bottom: 10px; right: 10px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #D9153A;">view →</span></div>
+            <h3 style="font-family: 'Archivo Black', sans-serif; font-size: 16px; text-transform: uppercase; margin: 0;">Red Light Shadows</h3>
+            <p style="font-size: 12px; font-weight: 300; color: rgba(240,234,230,.58); margin: 0;">VFX artist · short film</p>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showColorist }}">
+          <div id="reveal-g7" onClick="{{ openWaiting }}" style="{{ revealG7 }} grid-column: span 3; display: flex; flex-direction: column; gap: 10px; cursor: pointer; transition: transform .25s ease;" style-hover="transform: translateY(-4px);">
+            <div style="aspect-ratio: 16/9; background: #1A1213; background-image: repeating-linear-gradient(100deg, rgba(217,21,58,.14) 0 2px, transparent 2px 9px); border: 1px solid rgba(217,21,58,.24); position: relative; transition: border-color .25s ease;" style-hover="border-color: #D9153A;"><span style="position: absolute; bottom: 10px; right: 10px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #D9153A;">view →</span></div>
+            <h3 style="font-family: 'Archivo Black', sans-serif; font-size: clamp(18px, 2.2vw, 26px); text-transform: uppercase; letter-spacing: -.02em; margin: 0;">The Waiting Room</h3>
+            <p style="font-size: 12px; font-weight: 300; color: rgba(240,234,230,.6); margin: 0;">Colorist · short film</p>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showOther }}" hint-placeholder-val="{{ true }}">
+          <div id="reveal-g8" onClick="{{ openKeeta }}" style="{{ revealG8 }} grid-column: span 5; display: flex; flex-direction: column; gap: 10px; cursor: pointer; transition: transform .25s ease;" style-hover="transform: translateY(-4px);">
+            <div style="aspect-ratio: 16/9; background: #2E2324; background-image: repeating-linear-gradient(30deg, rgba(227,232,210,.1) 0 2px, transparent 2px 9px); border: 1px solid rgba(227,232,210,.2); position: relative; transition: border-color .25s ease;" style-hover="border-color: #D9153A;"><span style="position: absolute; bottom: 10px; right: 10px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #D9153A;">view →</span></div>
+            <h3 style="font-family: 'Archivo Black', sans-serif; font-size: clamp(17px, 2vw, 24px); text-transform: uppercase; letter-spacing: -.02em; margin: 0;">Keeta — Spec Ad</h3>
+            <p style="font-size: 12px; font-weight: 300; color: rgba(240,234,230,.6); margin: 0;">Production designer · storyboard artist</p>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showColorist }}">
+          <div id="reveal-g9" onClick="{{ openDontLeave }}" style="{{ revealG9 }} grid-column: span 7; display: flex; flex-direction: column; gap: 10px; cursor: pointer; transition: transform .25s ease;" style-hover="transform: translateY(-4px);">
+            <div style="aspect-ratio: 16/9; background: #1A1213; background-image: repeating-linear-gradient(70deg, rgba(240,234,230,.07) 0 2px, transparent 2px 7px); border: 1px solid rgba(240,234,230,.14); position: relative; transition: border-color .25s ease;" style-hover="border-color: #D9153A;"><span style="position: absolute; bottom: 10px; right: 10px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #D9153A;">view →</span></div>
+            <h3 style="font-family: 'Archivo Black', sans-serif; font-size: clamp(18px, 2.2vw, 26px); text-transform: uppercase; letter-spacing: -.02em; margin: 0;">Don't Leave</h3>
+            <p style="font-size: 12px; font-weight: 300; color: rgba(240,234,230,.6); margin: 0;">Sound recordist · color QC · short film</p>
+          </div>
+        </sc-if>
+
+      </div>
+
+      <div onClick="{{ openChef }}" style="cursor: pointer; align-self: flex-start; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .1em; color: rgba(240,234,230,.6);">+ Best Boy on <span style="color: #D9153A;">Chronicles of a Chef — Ep. 4 "Dil Se"</span> ↗</div>
+    </div>
+  </section>
+
+  <section id="act-journal" data-screen-label="05 BTS journal" style="position: relative; padding: clamp(60px, 9vw, 110px) 16px; background: #D9153A;">
+    <div style="max-width: 1440px; margin: 0 auto; display: flex; flex-direction: column; gap: clamp(22px, 3vw, 36px);">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: rgba(240,234,230,.75);">Journal · raw process · unpolished on purpose</span>
+      <div id="reveal-journal-h2" style="{{ revealJournalH2 }}">
+      <h2 style="font-family: 'Archivo Black', sans-serif; font-size: clamp(42px, 10vw, 150px); line-height: .8; letter-spacing: -.05em; text-transform: uppercase; margin: 0;">
+        Behind<br />the <span style="color: #E3E8D2;">mess</span>
+      </h2>
+      </div>
+      <p style="max-width: 560px; font-size: clamp(15px, 1.5vw, 17px); line-height: 1.6; font-weight: 300; color: rgba(240,234,230,.9); margin: 0;">Contact sheets, blown takes, lighting diagrams scrawled at 3am. Nothing here is a case study. It's the evidence.</p>
+
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; padding: 9px 13px; background: #241B1C; color: #F0EAE6;">Double Or Nothing</span>
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; padding: 9px 13px; border: 1px solid rgba(240,234,230,.4); color: rgba(240,234,230,.9);">Housewarming</span>
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; padding: 9px 13px; border: 1px solid rgba(240,234,230,.4); color: rgba(240,234,230,.9);">Kaise Main Batau</span>
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; padding: 9px 13px; border: 1px solid rgba(227,232,210,.5); color: #E3E8D2;">Red Light Shadows</span>
+      </div>
+
+      <div style="border: 1px solid rgba(240,234,230,.3); padding: 16px; background: #241B1C; display: flex; flex-direction: column; gap: 14px;">
+        <div style="display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: rgba(240,234,230,.55);">
+          <span>Contact sheet — Double Or Nothing, day 3</span><span style="color: #E3E8D2;">12 / 36 keepers</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(45%, 108px), 1fr)); gap: 8px;">
+          <div style="aspect-ratio: 3/2; background: #1A1213; background-image: repeating-linear-gradient(135deg, rgba(240,234,230,.08) 0 2px, transparent 2px 7px); border: 1px solid rgba(240,234,230,.1);"></div>
+          <div style="aspect-ratio: 3/2; background: #1A1213; background-image: repeating-linear-gradient(45deg, rgba(240,234,230,.06) 0 2px, transparent 2px 7px); border: 1px solid rgba(240,234,230,.1); opacity: .4;"></div>
+          <div style="aspect-ratio: 3/2; background: #1A1213; background-image: repeating-linear-gradient(90deg, rgba(227,232,210,.26) 0 2px, transparent 2px 8px); border: 2px solid #E3E8D2;"></div>
+          <div style="aspect-ratio: 3/2; background: #1A1213; background-image: repeating-linear-gradient(20deg, rgba(240,234,230,.07) 0 2px, transparent 2px 7px); border: 1px solid rgba(240,234,230,.1);"></div>
+          <div style="aspect-ratio: 3/2; background: #1A1213; background-image: repeating-linear-gradient(160deg, rgba(240,234,230,.05) 0 2px, transparent 2px 7px); border: 1px solid rgba(240,234,230,.1); opacity: .35;"></div>
+          <div style="aspect-ratio: 3/2; background: #1A1213; background-image: repeating-linear-gradient(115deg, rgba(227,232,210,.12) 0 2px, transparent 2px 7px); border: 1px solid rgba(227,232,210,.24);"></div>
+          <div style="aspect-ratio: 3/2; background: #1A1213; background-image: repeating-linear-gradient(135deg, rgba(240,234,230,.08) 0 2px, transparent 2px 7px); border: 1px solid rgba(240,234,230,.1);"></div>
+          <div style="aspect-ratio: 3/2; background: #1A1213; background-image: repeating-linear-gradient(70deg, rgba(240,234,230,.06) 0 2px, transparent 2px 7px); border: 1px solid rgba(240,234,230,.1); opacity: .45;"></div>
+          <div style="aspect-ratio: 3/2; background: #1A1213; background-image: repeating-linear-gradient(45deg, rgba(240,234,230,.07) 0 2px, transparent 2px 7px); border: 1px solid rgba(240,234,230,.1);"></div>
+          <div style="aspect-ratio: 3/2; background: #1A1213; background-image: repeating-linear-gradient(10deg, rgba(240,234,230,.05) 0 2px, transparent 2px 7px); border: 1px solid rgba(240,234,230,.1); opacity: .3;"></div>
+          <div style="aspect-ratio: 3/2; background: #1A1213; background-image: repeating-linear-gradient(140deg, rgba(240,234,230,.08) 0 2px, transparent 2px 7px); border: 1px solid rgba(240,234,230,.1);"></div>
+          <div style="aspect-ratio: 3/2; background: #1A1213; background-image: repeating-linear-gradient(95deg, rgba(240,234,230,.06) 0 2px, transparent 2px 7px); border: 1px solid rgba(240,234,230,.1); opacity: .5;"></div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: clamp(16px, 2vw, 24px); align-items: flex-start;">
+        <div style="flex: 2 1 min(100%, 300px); border: 1px solid rgba(240,234,230,.14); padding: 18px; background: #241B1C; display: flex; flex-direction: column; gap: 14px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: #F0EAE6;">Lighting diagram — Housewarming, int. night</div>
+          <div style="aspect-ratio: 4/3; background-image: repeating-linear-gradient(0deg, rgba(240,234,230,.07) 0 1px, transparent 1px 22px), repeating-linear-gradient(90deg, rgba(240,234,230,.07) 0 1px, transparent 1px 22px); border: 1px dashed rgba(240,234,230,.2); display: flex; align-items: center; justify-content: center; padding: 10px;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: rgba(240,234,230,.42); text-align: center;">scan of hand diagram</span>
+          </div>
+          <p style="font-size: 13px; line-height: 1.6; font-weight: 300; color: rgba(240,234,230,.76); margin: 0;">Two 300d through frost, one bare bulb practical carrying the whole back third of the room. The diagram is wrong — we moved everything twice.</p>
+        </div>
+        <div style="flex: 3 1 min(100%, 340px); display: flex; flex-direction: column; gap: clamp(16px, 2vw, 24px);">
+          <div style="aspect-ratio: 16/9; background: #241B1C; background-image: repeating-linear-gradient(135deg, rgba(240,234,230,.07) 0 2px, transparent 2px 10px); border: 1px solid rgba(240,234,230,.14); display: flex; align-items: flex-end; padding: 14px;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: rgba(240,234,230,.75);">bts video — Double Or Nothing · dolly rehearsal, take 9</span>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: clamp(16px, 2vw, 24px);">
+            <div style="flex: 1 1 min(100%, 240px); border: 1px solid rgba(227,232,210,.4); padding: 18px; background: #241B1C; display: flex; flex-direction: column; gap: 12px;">
+              <div style="font-family: 'Archivo Black', sans-serif; font-size: clamp(20px, 2.6vw, 32px); line-height: .94; text-transform: uppercase; letter-spacing: -.025em;">Take <span style="color: #E3E8D2;">9</span> was the one</div>
+              <p style="font-size: 13px; line-height: 1.6; font-weight: 300; color: rgba(240,234,230,.76); margin: 0;">Takes 1–8 are in here too. The failures explain the frame better than the frame does.</p>
+            </div>
+            <div style="flex: 1 1 min(100%, 160px); min-height: 150px; background: #241B1C; background-image: repeating-linear-gradient(60deg, rgba(240,234,230,.06) 0 2px, transparent 2px 8px); border: 1px solid rgba(240,234,230,.12);"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="act-contact" data-screen-label="06 Contact" style="position: relative; padding: clamp(90px, 14vw, 170px) 16px clamp(80px, 12vw, 150px);">
+    <div style="max-width: 880px; margin: 0 auto; display: flex; flex-direction: column; gap: clamp(24px, 3vw, 40px);">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: #3A4B32;">● Open for freelance &amp; internships</span>
+      <div id="reveal-contact-h2" style="{{ revealContactH2 }}">
+      <h2 style="font-family: 'Archivo Black', sans-serif; font-size: clamp(38px, 8vw, 108px); line-height: .88; letter-spacing: -.045em; text-transform: uppercase; margin: 0; color: #241B1C;">Let's<br />work together</h2>
+      </div>
+      <p style="max-width: 560px; font-size: clamp(16px, 1.8vw, 20px); line-height: 1.62; font-weight: 300; color: rgba(36,27,28,.78); margin: 0;">
+        Open to freelance camera, post and color work. Reach out directly — no brief required, we'll figure out the details together.
+      </p>
+      <a href="mailto:raghulkarthicsasikumar@gmail.com?subject=Let's%20work%20together" style="align-self: flex-start; background: #D9153A; color: #F0EAE6; border: none; padding: clamp(18px, 2.4vw, 26px) clamp(24px, 4vw, 46px); font-family: 'Archivo Black', sans-serif; font-size: clamp(16px, 2.2vw, 26px); text-transform: uppercase; letter-spacing: -.01em; cursor: pointer;" style-hover="background: #F0EAE6; color: #241B1C;">Email Raghul →</a>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: 28px; font-size: 15px; font-weight: 300; color: rgba(36,27,28,.75); margin-top: clamp(20px, 4vw, 40px);">
+        <div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: rgba(36,27,28,.5); margin-bottom: 8px;">Direct</div>
+          <a href="mailto:raghulkarthicsasikumar@gmail.com">raghulkarthicsasikumar@gmail.com</a>
+        </div>
+        <div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: rgba(36,27,28,.5); margin-bottom: 8px;">Phone</div>
+          <div>+971 52 502 2949</div>
+        </div>
+        <div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: rgba(36,27,28,.5); margin-bottom: 8px;">Location</div>
+          <div>Dubai, UAE</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ hasDetail }}">
+    <section data-screen-label="Project detail" style="position: relative; padding: clamp(90px, 10vw, 140px) 16px 100px;">
+      <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: clamp(28px, 4vw, 48px);">
+        <div onClick="{{ closeDetail }}" style="cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: #D9153A; align-self: flex-start;">← Back to work</div>
+        <div>
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .24em; text-transform: uppercase; color: rgba(240,234,230,.55);">{{ detailKindLabel }}</span>
+          <div id="reveal-detail-h2" style="{{ revealDetailH2 }}">
+          <h2 style="font-family: 'Archivo Black', sans-serif; font-size: clamp(36px, 7vw, 96px); line-height: .86; letter-spacing: -.04em; text-transform: uppercase; margin: 14px 0 0; text-wrap: balance;">{{ detailTitle }}</h2>
+          </div>
+          <p style="max-width: 620px; font-size: 16px; line-height: 1.6; font-weight: 300; color: rgba(240,234,230,.78); margin: 16px 0 0;">{{ detailDesc }}</p>
+        </div>
+
+        <sc-if value="{{ detailIsStoryboard }}" hint-placeholder-val="{{ false }}">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 16px;">
+            <div style="aspect-ratio: 4/3; background: #1A1213; border: 1px solid rgba(240,234,230,.16); position: relative; display: flex; align-items: center; justify-content: center;"><span style="position: absolute; top: 10px; left: 10px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: rgba(240,234,230,.4);">01</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: rgba(240,234,230,.3); text-transform: uppercase;">panel sketch</span></div>
+            <div style="aspect-ratio: 4/3; background: #1A1213; border: 1px solid rgba(240,234,230,.16); position: relative; display: flex; align-items: center; justify-content: center;"><span style="position: absolute; top: 10px; left: 10px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: rgba(240,234,230,.4);">02</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: rgba(240,234,230,.3); text-transform: uppercase;">panel sketch</span></div>
+            <div style="aspect-ratio: 4/3; background: #1A1213; border: 1px solid rgba(240,234,230,.16); position: relative; display: flex; align-items: center; justify-content: center;"><span style="position: absolute; top: 10px; left: 10px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: rgba(240,234,230,.4);">03</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: rgba(240,234,230,.3); text-transform: uppercase;">panel sketch</span></div>
+            <div style="aspect-ratio: 4/3; background: #1A1213; border: 1px solid rgba(240,234,230,.16); position: relative; display: flex; align-items: center; justify-content: center;"><span style="position: absolute; top: 10px; left: 10px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: rgba(240,234,230,.4);">04</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: rgba(240,234,230,.3); text-transform: uppercase;">panel sketch</span></div>
+            <div style="aspect-ratio: 4/3; background: #1A1213; border: 1px solid rgba(240,234,230,.16); position: relative; display: flex; align-items: center; justify-content: center;"><span style="position: absolute; top: 10px; left: 10px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: rgba(240,234,230,.4);">05</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: rgba(240,234,230,.3); text-transform: uppercase;">panel sketch</span></div>
+            <div style="aspect-ratio: 4/3; background: #1A1213; border: 1px solid rgba(240,234,230,.16); position: relative; display: flex; align-items: center; justify-content: center;"><span style="position: absolute; top: 10px; left: 10px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: rgba(240,234,230,.4);">06</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: rgba(240,234,230,.3); text-transform: uppercase;">panel sketch</span></div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ detailIsFilm }}" hint-placeholder-val="{{ true }}">
+          <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start;">
+            <div style="flex: 3 1 min(100%, 360px); aspect-ratio: 3/2; background: #1A1213; background-image: repeating-linear-gradient(135deg, rgba(240,234,230,.07) 0 2px, transparent 2px 9px); border: 1px solid rgba(240,234,230,.14);"></div>
+            <div style="flex: 2 1 min(100%, 220px); aspect-ratio: 4/5; background: #2E2324; background-image: repeating-linear-gradient(45deg, rgba(217,21,58,.16) 0 2px, transparent 2px 10px); border: 1px solid rgba(217,21,58,.26);"></div>
+            <div style="flex: 2 1 min(100%, 200px); aspect-ratio: 1/1; background: #1A1213; background-image: repeating-linear-gradient(20deg, rgba(240,234,230,.06) 0 2px, transparent 2px 7px); border: 1px solid rgba(240,234,230,.12);"></div>
+            <div style="flex: 4 1 min(100%, 400px); aspect-ratio: 16/9; background: #241B1C; background-image: repeating-linear-gradient(160deg, rgba(227,232,210,.09) 0 2px, transparent 2px 11px); border: 1px solid rgba(227,232,210,.2);"></div>
+            <div style="flex: 1 1 min(100%, 160px); aspect-ratio: 3/4; background: #1A1213; background-image: repeating-linear-gradient(70deg, rgba(240,234,230,.06) 0 2px, transparent 2px 8px); border: 1px solid rgba(240,234,230,.12);"></div>
+          </div>
+        </sc-if>
+
+        <div style="border-top: 1px solid rgba(240,234,230,.14); padding-top: clamp(28px, 4vw, 48px); display: flex; flex-direction: column; gap: 20px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .24em; text-transform: uppercase; color: #E3E8D2;">{{ detailLinkLabel }}</span>
+          <div style="position: relative; aspect-ratio: 16/9; max-width: 900px; background: #1A1213; background-image: repeating-linear-gradient(135deg, rgba(240,234,230,.06) 0 2px, transparent 2px 10px); border: 1px solid rgba(240,234,230,.16); display: flex; align-items: center; justify-content: center;">
+            <div style="width: 72px; height: 72px; border-radius: 50%; background: #D9153A; display: flex; align-items: center; justify-content: center;">
+              <div style="width: 0; height: 0; border-style: solid; border-width: 12px 0 12px 20px; border-color: transparent transparent transparent #F0EAE6; margin-left: 4px;"></div>
+            </div>
+          </div>
+          <a href="#" style="align-self: flex-start; font-family: 'Archivo Black', sans-serif; font-size: clamp(18px, 2.4vw, 26px); text-transform: uppercase; letter-spacing: -.02em;">{{ watchLabel }}</a>
+        </div>
+      </div>
+    </section>
+  </sc-if>
+
+  <footer style="border-top: 1px solid rgba(240,234,230,.12); padding: 24px 16px; background: #1A1213;">
+    <div style="max-width: 1440px; margin: 0 auto; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: rgba(240,234,230,.45);">
+      <span>Raghul — cinematography · color · craft</span>
+      <span>Black Bean · Urban Red · Ethereal Green</span>
+    </div>
+  </footer>
+
+  <sc-if value="{{ videoModal }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeVideo }}" style="position: fixed; inset: 0; z-index: 500; background: rgba(26,18,19,.9); display: flex; align-items: center; justify-content: center; padding: 24px;">
+      <div onClick="{{ stopProp }}" style="max-width: 900px; width: 100%; display: flex; flex-direction: column; gap: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px;">
+          <h3 style="font-family: 'Archivo Black', sans-serif; font-size: clamp(20px, 3vw, 32px); text-transform: uppercase; letter-spacing: -.02em; margin: 0; color: #F0EAE6;">Chronicles of a Chef — Ep. 4 "Dil Se"</h3>
+          <div onClick="{{ closeVideo }}" style="cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: #D9153A;">Close ✕</div>
+        </div>
+        <div style="position: relative; aspect-ratio: 16/9; background: #1A1213; background-image: repeating-linear-gradient(135deg, rgba(240,234,230,.06) 0 2px, transparent 2px 10px); border: 1px solid rgba(240,234,230,.16); display: flex; align-items: center; justify-content: center;">
+          <div style="width: 72px; height: 72px; border-radius: 50%; background: #D9153A; display: flex; align-items: center; justify-content: center;">
+            <div style="width: 0; height: 0; border-style: solid; border-width: 12px 0 12px 20px; border-color: transparent transparent transparent #F0EAE6; margin-left: 4px;"></div>
+          </div>
+        </div>
+        <p style="font-size: 13px; font-weight: 300; color: rgba(240,234,230,.68); margin: 0;">Best boy · episodic</p>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280},&quot;defaultRole&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;all&quot;,&quot;colorist&quot;,&quot;dp&quot;,&quot;editor&quot;],&quot;default&quot;:&quot;all&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Work gallery&quot;},&quot;grain&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Texture&quot;}}">
+const PROJECTS = {
+  don: { id: "don", title: "Double Or Nothing", desc: "Writer · Director · DP · Editor · Colorist · Sound Designer — short film", kind: "film" },
+  house: { id: "house", title: "Housewarming", desc: "DOP · Colorist · Sound Designer — short film", kind: "film" },
+  swey: { id: "swey", title: "SWEY: See the World, See Yourself", desc: "Colorist · for Swey Collective · 2025", kind: "film" },
+  kmb: { id: "kmb", title: "Kaise Main Batau", desc: "Colorist · VFX Assistant · Camera Operator · for Dhi Harmony · 2025", kind: "film" },
+  rls: { id: "rls", title: "Red Light Shadows", desc: "VFX Artist — short film", kind: "film" },
+  iow: { id: "iow", title: "In Other Words, I Loved You", desc: "Storyboard Artist · Assembly Editor — short film", kind: "storyboard" },
+  waiting: { id: "waiting", title: "The Waiting Room", desc: "Colorist — short film", kind: "film" },
+  keeta: { id: "keeta", title: "Keeta — Spec Ad", desc: "Production Designer · Storyboard Artist — spec commercial", kind: "film" },
+  dontleave: { id: "dontleave", title: "Don't Leave", desc: "Sound Recordist · Color QC — short film", kind: "film" }
+};
+
+class Component extends DCLogic {
+  state = { p: 0, pct: 0, active: "", w: 1200, detail: null, videoModal: false };
+  mouse = { x: -9999, y: -9999 };
+
+  componentDidMount() {
+    this._onScroll = () => {
+      if (this._raf) return;
+      this._raf = requestAnimationFrame(() => { this._raf = null; this.measure(); });
+    };
+    window.addEventListener("scroll", this._onScroll, { passive: true });
+    window.addEventListener("resize", this._onScroll);
+    this._onMove = (e) => { this.mouse.x = e.clientX; this.mouse.y = e.clientY; this._lastMove = performance.now(); };
+    window.addEventListener("mousemove", this._onMove, { passive: true });
+    this._resizeCanvas = () => {
+      if (!this.canvas) this.canvas = document.getElementById("bg-waves");
+      if (this.canvas) {
+        const newW = window.innerWidth, newH = document.documentElement.scrollHeight;
+        if (this.canvas.width !== newW || this.canvas.height !== newH) {
+          this.canvas.width = newW;
+          this.canvas.height = newH;
+          this.canvas.style.height = newH + "px";
+        }
+      }
+    };
+    window.addEventListener("resize", this._resizeCanvas);
+    this._resizeCanvas();
+    this._resizeTimer = setInterval(this._resizeCanvas, 1500);
+    this._waveStart = performance.now();
+    this._lastMove = 0;
+    this._animateWaves();
+    this.measure();
+    requestAnimationFrame(() => this.measure());
+    setTimeout(() => this.measure(), 350);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => this.measure());
+  }
+  componentWillUnmount() {
+    window.removeEventListener("scroll", this._onScroll);
+    window.removeEventListener("resize", this._onScroll);
+    window.removeEventListener("resize", this._resizeCanvas);
+    window.removeEventListener("mousemove", this._onMove);
+    clearInterval(this._resizeTimer);
+    if (this._raf) cancelAnimationFrame(this._raf);
+    if (this._waveRaf) cancelAnimationFrame(this._waveRaf);
+  }
+
+  _animateWaves() {
+    this._waveRaf = requestAnimationFrame(() => this._animateWaves());
+    const c = this.canvas || (this.canvas = document.getElementById("bg-waves"));
+    if (!c) return;
+    const ctx = c.getContext("2d");
+    const w = c.width, h = c.height;
+    if (!w || !h) return;
+    const sinceMove = performance.now() - (this._lastMove || 0);
+    const active = sinceMove < 1200;
+    if (this._speed === undefined) this._speed = 0.18;
+    const targetSpeed = active ? 1 : 0.18;
+    this._speed += (targetSpeed - this._speed) * 0.04;
+    if (this._t === undefined) this._t = 0;
+    this._t += (1 / 60) * this._speed;
+    const t = this._t;
+    if (this._smoothMouse === undefined) this._smoothMouse = { x: this.mouse.x, y: this.mouse.y };
+    this._smoothMouse.x += (this.mouse.x - this._smoothMouse.x) * 0.12;
+    this._smoothMouse.y += (this.mouse.y - this._smoothMouse.y) * 0.12;
+    ctx.clearRect(0, 0, w, h);
+    const scrollY = window.scrollY || 0;
+    const vh = window.innerHeight || 800;
+    const lineColor = "217,21,58";
+    const altColor = "150,180,140";
+    const bandCount = Math.max(4, Math.ceil(h / 420));
+    if (!this._angles) {
+      this._angles = [];
+      for (let i = 0; i < bandCount; i++) this._angles.push((Math.sin(i * 12.9898) * 43758.5453 % 1) * 30 - 15);
+    }
+    for (let i = 0; i < bandCount; i++) {
+      const baseY = h * ((i + 0.5) / bandCount);
+      if (baseY < scrollY - 400 || baseY > scrollY + vh + 400) continue;
+      const angle = (this._angles[i] || 0) * Math.PI / 180;
+      ctx.save();
+      ctx.translate(w / 2, baseY);
+      ctx.rotate(angle);
+      ctx.beginPath();
+      ctx.strokeStyle = "rgba(" + (i % 2 === 0 ? lineColor : altColor) + "," + (0.4 + (i % 2) * 0.08) + ")";
+      ctx.lineWidth = 3.5;
+      const span = w * 1.4;
+      for (let x = -span / 2; x <= span / 2; x += 14) {
+        const px = x, py0 = 0;
+        const worldX = w / 2 + x * Math.cos(angle);
+        const worldY = baseY + x * Math.sin(angle);
+        const mdx = worldX - this._smoothMouse.x, mdy = worldY - (this._smoothMouse.y + scrollY);
+        const dist = Math.sqrt(mdx * mdx + mdy * mdy);
+        const proximity = Math.max(0, 1 - dist / 340);
+        const bump = active ? (proximity * proximity * (3 - 2 * proximity)) * 90 : 0;
+        const y = py0 + Math.sin(x * 0.006 + t * (0.3 + i * 0.05) + i * 1.3) * (16 + i * 2) - bump;
+        if (x === -span / 2) ctx.moveTo(px, y); else ctx.lineTo(px, y);
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  rectTop(el) {
+    return el.getBoundingClientRect().top + window.scrollY;
+  }
+
+  measure() {
+    const y = window.scrollY || 0;
+    const vh = window.innerHeight || 800;
+    const doc = document.documentElement.scrollHeight - vh;
+    const intro = document.getElementById("act-intro");
+    const travel = intro ? Math.max(1, intro.offsetHeight - vh) : vh;
+    const p = Math.min(1, Math.max(0, y / travel));
+    const navIds = ["act-work", "act-manifesto", "act-journal", "act-contact"];
+    const navKeys = { "act-work": "work", "act-manifesto": "about", "act-journal": "journal", "act-contact": "contact" };
+    let active = "";
+    navIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const top = this.rectTop(el);
+      if (y + vh * 0.35 >= top && y < top + el.offsetHeight - vh * 0.3) active = navKeys[id];
+    });
+
+    const order = [
+      { id: "act-intro", color: [26, 18, 19] },
+      { id: "act-hero", color: [36, 27, 28] },
+      { id: "act-manifesto", color: [217, 21, 58] },
+      { id: "act-work", color: [26, 18, 19] },
+      { id: "act-journal", color: [36, 27, 28] },
+      { id: "act-contact", color: [240, 234, 230] }
+    ];
+    const secs = order.map((s) => {
+      const el = document.getElementById(s.id);
+      if (!el) return { color: s.color, top: 0, bottom: vh };
+      const top = this.rectTop(el);
+      return { color: s.color, top, bottom: top + el.offsetHeight };
+    });
+    const cy = y + vh * 0.5;
+    let idx = secs.findIndex((s) => cy < s.bottom);
+    if (idx < 0) idx = secs.length - 1;
+    const bg = secs[idx].color;
+
+    const revealIds = ["reveal-hero-h1", "reveal-manifesto-h2", "reveal-work-h2", "reveal-journal-h2", "reveal-contact-h2", "reveal-detail-h2", "reveal-g1", "reveal-g2", "reveal-g3", "reveal-g4", "reveal-g5", "reveal-g6", "reveal-g7", "reveal-g8", "reveal-g9"];
+    const reveal = {};
+    revealIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) { reveal[id] = 0; return; }
+      const top = el.getBoundingClientRect().top;
+      reveal[id] = Math.min(1, Math.max(0, 1 - (top - vh * 0.65) / (vh * 0.32)));
+    });
+
+    this.setState({ p, pct: doc > 0 ? (y / doc) * 100 : 0, active, w: window.innerWidth || 1200, bg, reveal });
+  }
+
+  scrollTo(id) {
+    const el = document.getElementById(id);
+    if (el) window.scrollTo({ top: Math.max(0, this.rectTop(el) - 56), behavior: "smooth" });
+  }
+  navGo(id) {
+    if (this.state.detail) {
+      this.setState({ detail: null }, () => requestAnimationFrame(() => requestAnimationFrame(() => this.scrollTo(id))));
+    } else {
+      this.scrollTo(id);
+    }
+  }
+  openDetail(key) {
+    this.setState({ detail: PROJECTS[key] });
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }
+
+  renderVals() {
+    const { p, pct, active, w, bg, reveal, detail } = this.state;
+    const e = 1 - Math.pow(1 - p, 3);
+    const k = Math.min(1, w / 1200);
+    const spread = [
+      [-0.30, -0.42, -26], [0.24, 0.46, 22], [-0.16, 0.50, 34],
+      [0.30, -0.44, -18], [-0.26, 0.24, 28], [0.20, -0.50, -32]
+    ];
+    const t = (i) => {
+      const [sx, sy, rot] = spread[i];
+      const f = (1 - e) * k;
+      return "translate(" + (sx * w * f).toFixed(1) + "px," + (sy * (window.innerHeight || 800) * f).toFixed(1) + "px) rotate(" + (rot * (1 - e)).toFixed(1) + "deg) scale(" + (1 + 0.45 * (1 - e)).toFixed(3) + ")";
+    };
+    const labels = { all: "all 06 projects", colorist: "colorist", dp: "director of photography", editor: "editor / vfx" };
+    const role = this.state.role || this.props.defaultRole || "all";
+    const bgColor = bg ? "rgb(" + bg.join(",") + ")" : "rgb(26,18,19)";
+    const rv = reveal || {};
+    const revealStyle = (id) => {
+      const v = rv[id] ?? 0;
+      return "opacity:" + v.toFixed(2) + ";transform:translateY(" + (24 * (1 - v)).toFixed(1) + "px);";
+    };
+    const yNow = window.scrollY || 0;
+    const d = detail || {};
+    return {
+      scrollPct: pct.toFixed(2) + "%",
+      grainOn: this.props.grain !== false,
+      bgColor,
+      parallaxA: "translateY(" + Math.min(24, yNow * 0.03).toFixed(1) + "px)",
+      parallaxB: "translateY(" + Math.min(-18, -yNow * 0.02).toFixed(1) + "px)",
+      revealHeroH1: revealStyle("reveal-hero-h1"),
+      revealManifestoH2: revealStyle("reveal-manifesto-h2"),
+      revealWorkH2: revealStyle("reveal-work-h2"),
+      revealJournalH2: revealStyle("reveal-journal-h2"),
+      revealContactH2: revealStyle("reveal-contact-h2"),
+      revealDetailH2: revealStyle("reveal-detail-h2"),
+      revealG1: revealStyle("reveal-g1"), revealG2: revealStyle("reveal-g2"), revealG3: revealStyle("reveal-g3"),
+      revealG4: revealStyle("reveal-g4"), revealG5: revealStyle("reveal-g5"), revealG6: revealStyle("reveal-g6"),
+      l0: t(0), l1: t(1), l2: t(2), l3: t(3), l4: t(4), l5: t(5),
+      atWork: active === "work", atAbout: active === "about",
+      atJournal: active === "journal", atContact: active === "contact",
+      roleLabel: labels[role],
+      showColorist: role === "all" || role === "colorist",
+      showDp: role === "all" || role === "dp",
+      showEditor: role === "all" || role === "editor",
+      hasDetail: !!detail,
+      detailIsStoryboard: d.kind === "storyboard",
+      detailIsFilm: d.kind !== "storyboard",
+      detailKindLabel: d.kind === "storyboard" ? "Storyboards" : "Stills",
+      detailLinkLabel: d.kind === "storyboard" ? "View the finished film" : "Watch the reel",
+      watchLabel: d.kind === "storyboard" ? "Watch the film →" : "Watch the reel →",
+      detailTitle: d.title || "",
+      detailDesc: d.desc || "",
+      goTop: () => { this.setState({ detail: null }); window.scrollTo({ top: 0, behavior: "smooth" }); },
+      goHero: () => this.navGo("act-hero"),
+      goWork: () => this.navGo("act-work"),
+      goAbout: () => this.navGo("act-manifesto"),
+      goJournal: () => this.navGo("act-journal"),
+      goContact: () => this.navGo("act-contact"),
+      closeDetail: () => { this.setState({ detail: null }); requestAnimationFrame(() => requestAnimationFrame(() => this.scrollTo("act-work"))); },
+      openDon: () => this.openDetail("don"),
+      openHouse: () => this.openDetail("house"),
+      openSwey: () => this.openDetail("swey"),
+      openKmb: () => this.openDetail("kmb"),
+      openRls: () => this.openDetail("rls"),
+      openIow: () => this.openDetail("iow"),
+      openWaiting: () => this.openDetail("waiting"),
+      openKeeta: () => this.openDetail("keeta"),
+      openDontLeave: () => this.openDetail("dontleave"),
+      showOther: role === "all",
+      revealG7: revealStyle("reveal-g7"), revealG8: revealStyle("reveal-g8"), revealG9: revealStyle("reveal-g9"),
+      openChef: () => this.setState({ videoModal: true }),
+      closeVideo: () => this.setState({ videoModal: false }),
+      stopProp: (e) => e.stopPropagation(),
+      videoModal: this.state.videoModal,
+      filterAll: () => this.setState({ role: "all" }),
+      filterColorist: () => this.setState({ role: "colorist" }),
+      filterDp: () => this.setState({ role: "dp" }),
+      filterEditor: () => this.setState({ role: "editor" })
+    };
+  }
+}
+</script>
+</body>
+</html>

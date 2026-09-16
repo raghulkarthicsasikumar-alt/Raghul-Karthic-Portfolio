@@ -37,7 +37,7 @@ const MEDIA = {
     },
 
     swey: {
-      reel: "",
+      reel: "https://www.youtube.com/embed/videoseries?list=PLGBvRabH3Wt7X1n9LnP5qfOXW8MgsGHd8",
       panels: [
         { img: "1nu_eXggyW7SvGmBzvIH8P1r5JS6U_iuR", title: "Still 01" },
         { img: "14OfxKfWCZMugvvo7drg3Hd4M5aOdSaZ7", title: "Still 02" },
@@ -53,7 +53,7 @@ const MEDIA = {
 
     // storyboard photos (PHOTO-*.jpg set)
     iow: {
-      reel: "",
+      reel: "https://www.youtube.com/embed/9SKQiPkImlY",
       panels: [
         { img: "14b9CweyJW4aiqrTpuK0pxCqefXFhSwFi", title: "Panel 01" },
         { img: "1VO1CrSHHivSMbzexFLbl6ejt0iXqRM2V", title: "Panel 02" },
@@ -68,7 +68,7 @@ const MEDIA = {
     },
 
     kmb: {
-      reel: "",
+      reel: "https://www.youtube.com/embed/l_v5yS9Tet0",
       panels: [
         { img: "1jVgJ11XZZ5EwQtkN51G5CifpkQMO9Snp", title: "Storyboard 01" },
         { img: "1pmVk6lR-id9OUEQnz68NKnbmtAhVzh8Q", title: "Storyboard 02" },
@@ -92,7 +92,7 @@ const MEDIA = {
     },
 
     waiting: {
-      reel: "",
+      reel: "https://www.youtube.com/embed/ZMFfGNMA09U",
       panels: [
         { img: "1DQgdbtW732wzyvHpECudBdcTmAnSh88A", title: "Still 01" },
         { img: "1eai44p_RwO3VbExurmQmz7n7iBHFXVWF", title: "Still 02" },
@@ -107,7 +107,7 @@ const MEDIA = {
     },
 
     keeta: {
-      reel: "",
+      reel: "https://www.youtube.com/embed/KxUCqJpana8",
       panels: [
         { img: "1r1R-j9uwGu7CEhUxigG2YjyOswk95DIT", title: "Panel 01" },
         { img: "1q2crbQH_ihR3ZMWrRwHvUFFkmDEiMf5S", title: "Panel 02" },
@@ -160,6 +160,13 @@ function driveImageUrl(id) {
 
 function driveVideoEmbedUrl(id) {
   return id ? `https://drive.google.com/file/d/${id}/preview` : null;
+}
+
+// Accepts either a bare Drive file ID or a full embeddable URL (e.g. a
+// youtube.com/embed/... link) and returns a ready iframe src, or null.
+function resolveEmbedUrl(value) {
+  if (!value) return null;
+  return /^https?:\/\//i.test(value) ? value : driveVideoEmbedUrl(value);
 }
 
 function applyDriveBackground(el, driveId) {

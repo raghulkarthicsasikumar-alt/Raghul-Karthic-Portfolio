@@ -280,10 +280,10 @@
   }
 
   /* ---------------- Video modal ---------------- */
-  function openVideoModal(title, driveId, statusText) {
+  function openVideoModal(title, reelValue, statusText) {
     const modal = $("#videoModal");
     const stage = $("#videoModalStage");
-    const embedUrl = hasMedia ? driveVideoEmbedUrl(driveId) : null;
+    const embedUrl = hasMedia ? resolveEmbedUrl(reelValue) : null;
     if (embedUrl) {
       stage.innerHTML = `<iframe src="${embedUrl}" allow="autoplay" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0;"></iframe>`;
     } else if (statusText) {

@@ -158,7 +158,7 @@
   /* ---------------- Gallery + project detail ---------------- */
   // Projects with no detail page: clicking the card opens the video modal
   // directly with a status message (or the reel, once a link is set).
-  const NO_DETAIL_IDS = ["house", "dontleave"];
+  const NO_DETAIL_IDS = ["house"];
 
   function coverFor(id) {
     const m = projectMedia(id);
@@ -227,6 +227,21 @@
       .join("");
     if (hasMedia) {
       panels.forEach((panel, i) => applyDriveBackground($("#detailPanel-" + i), panel.img));
+    }
+    const media = projectMedia(id);
+    const reelWrap = $("#detailReel");
+    if (media.statusText) {
+      reelWrap.innerHTML = `
+        <span class="eyebrow mint">Reel</span>
+        <span class="status-text">${media.statusText}</span>`;
+    } else {
+      reelWrap.innerHTML = `
+        <span class="eyebrow mint">Watch the reel</span>
+        <div class="video-plate" id="detailPlay" data-cursor="magnetic"><div class="play-btn"><div class="play-tri"></div></div></div>
+        <a href="#" class="watch-label">Full reel ↗</a>`;
+      $("#detailPlay").addEventListener("click", () => {
+        openVideoModal(p.title, media.reel, "Work in progress");
+      });
     }
     window.scrollTo({ top: 0, behavior: "auto" });
     requestAnimationFrame(() => $$(".reveal-up, .reveal-scale", detail).forEach((el) => el.classList.add("in-view")));
@@ -301,10 +316,6 @@
       openVideoModal("Chronicles of a Chef — Ep. 4 \"Dil Se\"", hasMedia ? MEDIA.chefReel : "", "Work in progress");
     });
     $("#closeVideoBtn").addEventListener("click", () => { modal.hidden = true; });
-    $("#detailPlay") && $("#detailPlay").addEventListener("click", () => {
-      const p = PROJECTS.find((x) => x.id === activeDetailId);
-      openVideoModal(p ? p.title : "", activeDetailId ? projectMedia(activeDetailId).reel : "", "Work in progress");
-    });
     modal.addEventListener("click", (e) => { if (e.target === modal) modal.hidden = true; });
   }
 

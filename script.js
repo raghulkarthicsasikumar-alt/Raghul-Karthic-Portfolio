@@ -170,6 +170,11 @@
     return "";
   }
 
+  function stillsFor(id) {
+    const m = projectMedia(id);
+    return (m.panels || []).filter((panel) => /^still/i.test(panel.title || ""));
+  }
+
   function cardMarkup(p) {
     return `
       <div class="card" data-id="${p.id}" data-size="${p.size}" style="grid-column: span ${p.span};">
@@ -198,9 +203,12 @@
       card.addEventListener("click", () => {
         const id = card.dataset.id;
         const p = PROJECTS.find((x) => x.id === id);
+        const stills = hasMedia ? stillsFor(id) : [];
         if (NO_DETAIL_IDS.includes(id)) {
           const m = projectMedia(id);
           openVideoModal(p.title, m.reel, m.statusText || "Work in progress");
+        } else if (stills.length) {
+          openStillsModal(p.title, stills);
         } else {
           openDetail(id);
         }
@@ -322,6 +330,58 @@
     modal.addEventListener("click", (e) => { if (e.target === modal) modal.hidden = true; });
   }
 
+  /* ---------------- Stills slideshow modal ---------------- */
+  let stillsTimer = null;
+
+  function renderStillsSlide(stills, idx) {
+    const img = $("#stillsStageImg");
+    const caption = $("#stillsCaption");
+    img.style.opacity = 0;
+    setTimeout(() => {
+      img.src = driveImageUrl(stills[idx].img) || "";
+      img.alt = stills[idx].title || "";
+      caption.textContent = stills[idx].title || "";
+      img.style.opacity = 1;
+      $$("#stillsDots .stills-dot").forEach((d, i) => d.classList.toggle("active", i === idx));
+    }, 220);
+  }
+
+  function openStillsModal(title, stills) {
+    if (!stills.length) return;
+    const modal = $("#stillsModal");
+    $("#stillsModalTitle").textContent = title;
+    const dotsWrap = $("#stillsDots");
+    dotsWrap.innerHTML = stills.map((_, i) => `<span class="stills-dot" data-i="${i}"></span>`).join("");
+    let idx = 0;
+    renderStillsSlide(stills, idx);
+
+    function goTo(i) {
+      idx = i;
+      renderStillsSlide(stills, idx);
+      restart();
+    }
+    function restart() {
+      clearInterval(stillsTimer);
+      stillsTimer = setInterval(() => { idx = (idx + 1) % stills.length; renderStillsSlide(stills, idx); }, 3200);
+    }
+    $$("#stillsDots .stills-dot").forEach((dot) => {
+      dot.addEventListener("click", () => goTo(Number(dot.dataset.i)));
+    });
+    restart();
+    modal.hidden = false;
+  }
+
+  function closeStillsModal() {
+    clearInterval(stillsTimer);
+    $("#stillsModal").hidden = true;
+  }
+
+  function initStillsModal() {
+    const modal = $("#stillsModal");
+    $("#closeStillsBtn").addEventListener("click", closeStillsModal);
+    modal.addEventListener("click", (e) => { if (e.target === modal) closeStillsModal(); });
+  }
+
   /* ---------------- Background wave canvas (mouse-reactive) ---------------- */
   function initWaves() {
     const canvas = $("#bg-waves");
@@ -434,6 +494,7 @@
     initGallery();
     initUpcoming();
     initVideoModal();
+    initStillsModal();
     initWaves();
     initStaticDriveMedia();
   });

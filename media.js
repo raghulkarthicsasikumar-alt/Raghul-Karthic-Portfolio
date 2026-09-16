@@ -70,6 +70,14 @@ const MEDIA = {
     kmb: {
       reel: "https://www.youtube.com/embed/l_v5yS9Tet0",
       panels: [
+        { img: "1LDAKMleDZggATfpXRycsAi1V9gmeZeKO", title: "Still 01" },
+        { img: "1Vzn59_jTRDEKfV3MFoHJ6iITc8-9xZ_t", title: "Still 02" },
+        { img: "1nW4T2n1t-6mA5YFyd7QqWDpw276cw165", title: "Still 03" },
+        { img: "1D4cEoJHRUPHz_HB7tistp78XaSV3EWuw", title: "Still 04" },
+        { img: "1H-YFFmORhpIQvi21EiM_poauDYokpiVm", title: "Still 05" },
+        { img: "1PX5BKC3GISFiTScPu30CMWRnXi1QAk46", title: "Still 06" },
+        { img: "1nUwbAm8v-9G_iEnxaHbbrG0yqSBfH9qk", title: "Still 07" },
+        { img: "1u_g14FLjQHAXqUv3HaE0RCeTE9S_ihjq", title: "Still 08" },
         { img: "1jVgJ11XZZ5EwQtkN51G5CifpkQMO9Snp", title: "Storyboard 01" },
         { img: "1pmVk6lR-id9OUEQnz68NKnbmtAhVzh8Q", title: "Storyboard 02" },
         { img: "1xSPlk2gLAdolujjH2eOWmRaxSpp9CVPa", title: "Storyboard 03" },
@@ -79,15 +87,7 @@ const MEDIA = {
         { img: "1-QAzc6NwaA4ezIjXwfvMjrKBd2_OV7AU", title: "Storyboard 07" },
         { img: "1iDPWQJpRyN-BFK3ylv0iIzcpJk2ffaQt", title: "Storyboard 08" },
         { img: "1seJ1LI7BCvkd9PvhCZuCDAnBdhKRgD4B", title: "Storyboard 09" },
-        { img: "1HU3PsRjMsg0-zK_vdV9ZBcCqRWNOlkPU", title: "Storyboard 10" },
-        { img: "1LDAKMleDZggATfpXRycsAi1V9gmeZeKO", title: "Still 01" },
-        { img: "1Vzn59_jTRDEKfV3MFoHJ6iITc8-9xZ_t", title: "Still 02" },
-        { img: "1nW4T2n1t-6mA5YFyd7QqWDpw276cw165", title: "Still 03" },
-        { img: "1D4cEoJHRUPHz_HB7tistp78XaSV3EWuw", title: "Still 04" },
-        { img: "1H-YFFmORhpIQvi21EiM_poauDYokpiVm", title: "Still 05" },
-        { img: "1PX5BKC3GISFiTScPu30CMWRnXi1QAk46", title: "Still 06" },
-        { img: "1nUwbAm8v-9G_iEnxaHbbrG0yqSBfH9qk", title: "Still 07" },
-        { img: "1u_g14FLjQHAXqUv3HaE0RCeTE9S_ihjq", title: "Still 08" }
+        { img: "1HU3PsRjMsg0-zK_vdV9ZBcCqRWNOlkPU", title: "Storyboard 10" }
       ]
     },
 

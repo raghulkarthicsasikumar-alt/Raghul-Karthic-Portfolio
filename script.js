@@ -192,20 +192,24 @@
 
   function startCardSlideshows(list) {
     if (!hasMedia) return;
-    const items = list
-      .map((p) => ({ id: p.id, panels: projectMedia(p.id).panels || [] }))
-      .filter((x) => x.panels.length > 1);
-    if (!items.length) return;
-    let tick = 0;
-    const timer = setInterval(() => {
-      tick++;
-      items.forEach(({ id, panels }) => {
-        const el = $("#cardMedia-" + id);
-        if (!el) return;
-        applyDriveBackground(el, panels[tick % panels.length].img);
-      });
-    }, 2600);
-    cardSlideTimers.push(timer);
+    list.forEach((p) => {
+      const panels = projectMedia(p.id).panels || [];
+      if (panels.length < 2) return;
+      const el = $("#cardMedia-" + p.id);
+      if (!el) return;
+      let idx = 0;
+      // randomized period + a staggered start so cards visibly stay out of sync
+      const period = 4200 + Math.random() * 2400;
+      const startDelay = Math.random() * period;
+      const startTimer = setTimeout(() => {
+        const timer = setInterval(() => {
+          idx = (idx + 1) % panels.length;
+          applyDriveBackground(el, panels[idx].img);
+        }, period);
+        cardSlideTimers.push(timer);
+      }, startDelay);
+      cardSlideTimers.push(startTimer);
+    });
   }
 
   function renderGallery(filter) {

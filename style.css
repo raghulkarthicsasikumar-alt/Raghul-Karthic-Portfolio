@@ -135,12 +135,19 @@ html.has-cursor, html.has-cursor * { cursor: none !important; }
 .card:hover { transform: translateY(-4px); }
 .card-media { aspect-ratio: 16/9; background: var(--bg); border: 1px solid rgba(240,234,230,.16); position: relative; display: flex; align-items: flex-end; justify-content: space-between; padding: 14px; transition: border-color .25s ease; }
 .card:hover .card-media { border-color: var(--red); }
+.card-plate-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: rgba(240,234,230,.5); }
 .card-tag { position: absolute; bottom: 12px; right: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--red); }
 .card-role { background: var(--red); padding: 8px 14px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; align-self: flex-start; }
 .card h3 { text-transform: uppercase; letter-spacing: -.02em; }
 .card p { font-size: 13px; font-weight: 300; color: rgba(240,234,230,.68); }
 .credit-line { cursor: pointer; align-self: flex-start; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .1em; color: rgba(240,234,230,.6); }
 .credit-line:hover { color: var(--mint); }
+
+/* upcoming */
+.upcoming { position: relative; padding: clamp(60px, 9vw, 110px) 16px; }
+.upcoming .wrap { display: flex; flex-direction: column; gap: clamp(22px, 3vw, 38px); }
+.upcoming h2 { font-size: clamp(42px, 10vw, 150px); line-height: .82; letter-spacing: -.05em; text-transform: uppercase; }
+.upcoming-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); }
 
 /* journal */
 .journal { position: relative; padding: clamp(60px, 9vw, 110px) 16px; background: var(--red); }
@@ -190,13 +197,16 @@ h2.dark { font-size: clamp(38px, 8vw, 108px); line-height: .88; letter-spacing: 
 .back-link:hover { color: var(--mint); }
 #detailTitle { font-size: clamp(36px, 7vw, 96px); line-height: .86; letter-spacing: -.04em; text-transform: uppercase; margin: 14px 0 0; text-wrap: balance; }
 .detail-desc { max-width: 620px; font-size: 16px; line-height: 1.6; font-weight: 300; color: rgba(240,234,230,.78); margin: 16px 0 0; }
-.detail-media { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
-.detail-media .plate-block { background: var(--bg); border: 1px solid rgba(240,234,230,.14); }
+.detail-media { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 16px; align-items: start; }
+.detail-media .plate-block { background: var(--bg); border: 1px solid rgba(240,234,230,.14); background-size: cover; background-position: center; }
+.panel-tile { display: flex; flex-direction: column; gap: 8px; }
+.panel-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: rgba(240,234,230,.55); }
 .detail-reel { border-top: 1px solid rgba(240,234,230,.14); padding-top: clamp(28px, 4vw, 48px); display: flex; flex-direction: column; gap: 20px; }
 .video-plate { position: relative; aspect-ratio: 16/9; max-width: 900px; background: var(--bg); background-image: repeating-linear-gradient(135deg, rgba(240,234,230,.06) 0 2px, transparent 2px 10px); border: 1px solid rgba(240,234,230,.16); display: flex; align-items: center; justify-content: center; cursor: pointer; }
 .play-btn { width: 72px; height: 72px; border-radius: 50%; background: var(--red); display: flex; align-items: center; justify-content: center; transition: transform .2s ease; }
 .video-plate:hover .play-btn { transform: scale(1.08); }
 .play-tri { width: 0; height: 0; border-style: solid; border-width: 12px 0 12px 20px; border-color: transparent transparent transparent var(--ink); margin-left: 4px; }
+.status-text { font-family: 'IBM Plex Mono', monospace; font-size: clamp(12px, 1.6vw, 15px); letter-spacing: .2em; text-transform: uppercase; color: var(--mint); }
 .watch-label { align-self: flex-start; font-family: 'Archivo Black', sans-serif; font-size: clamp(18px, 2.4vw, 26px); text-transform: uppercase; letter-spacing: -.02em; }
 
 /* footer */

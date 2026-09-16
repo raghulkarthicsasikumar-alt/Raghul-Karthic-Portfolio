@@ -156,6 +156,17 @@
   }
 
   /* ---------------- Gallery + project detail ---------------- */
+  // Projects with no detail page: clicking the card opens the video modal
+  // directly with a status message (or the reel, once a link is set).
+  const NO_DETAIL_IDS = ["house", "dontleave"];
+
+  function coverFor(id) {
+    const m = projectMedia(id);
+    if (m.cover) return m.cover;
+    if (m.panels && m.panels.length) return m.panels[0].img;
+    return "";
+  }
+
   function cardMarkup(p) {
     return `
       <div class="card" data-id="${p.id}" data-size="${p.size}" style="grid-column: span ${p.span};">
@@ -175,13 +186,22 @@
     gallery.innerHTML = list.map(cardMarkup).join("");
     attachCardEvents();
     if (hasMedia) {
-      list.forEach((p) => applyDriveBackground($("#cardMedia-" + p.id), projectMedia(p.id).cover));
+      list.forEach((p) => applyDriveBackground($("#cardMedia-" + p.id), coverFor(p.id)));
     }
   }
 
   function attachCardEvents() {
     $$(".card").forEach((card) => {
-      card.addEventListener("click", () => openDetail(card.dataset.id));
+      card.addEventListener("click", () => {
+        const id = card.dataset.id;
+        const p = PROJECTS.find((x) => x.id === id);
+        if (NO_DETAIL_IDS.includes(id)) {
+          const m = projectMedia(id);
+          openVideoModal(p.title, m.reel, m.statusText || "Work in progress");
+        } else {
+          openDetail(id);
+        }
+      });
     });
   }
 
@@ -197,13 +217,16 @@
     $("#detailKind").textContent = p.roles.includes("colorist") ? "Colorist project" : p.roles.includes("dp") ? "Director / DP project" : "Editorial project";
     $("#detailTitle").textContent = p.title;
     $("#detailDesc").textContent = p.desc;
-    const stills = projectMedia(id).stills || [];
-    const flexes = ["3 1 min(100%,360px)", "2 1 min(100%,220px)", "2 1 min(100%,200px)", "4 1 min(100%,400px)", "1 1 min(100%,160px)"];
-    $("#detailMedia").innerHTML = flexes
-      .map((flex, i) => `<div class="plate-block" id="detailMedia-${i}" style="flex:${flex}; aspect-ratio:16/9;"></div>`)
+    const panels = projectMedia(id).panels || [];
+    $("#detailMedia").innerHTML = panels
+      .map((panel, i) => `
+        <div class="panel-tile">
+          <div class="plate-block" id="detailPanel-${i}" style="aspect-ratio:16/9;"></div>
+          ${panel.title ? `<span class="panel-title">${panel.title}</span>` : ""}
+        </div>`)
       .join("");
     if (hasMedia) {
-      flexes.forEach((_, i) => applyDriveBackground($("#detailMedia-" + i), stills[i]));
+      panels.forEach((panel, i) => applyDriveBackground($("#detailPanel-" + i), panel.img));
     }
     window.scrollTo({ top: 0, behavior: "auto" });
     requestAnimationFrame(() => $$(".reveal-up, .reveal-scale", detail).forEach((el) => el.classList.add("in-view")));
@@ -228,23 +251,59 @@
     $("#backBtn").addEventListener("click", closeDetail);
   }
 
+  /* ---------------- Upcoming (in-production) section ---------------- */
+  function upcomingMarkup(p) {
+    return `
+      <div class="card upcoming-card" data-id="${p.id}">
+        <div class="card-media" id="cardMedia-${p.id}">
+          <span class="card-plate-label">in production</span>
+          <span class="card-tag">coming soon →</span>
+        </div>
+        <h3>${p.title}</h3>
+        <p>${p.desc}</p>
+      </div>`;
+  }
+
+  function initUpcoming() {
+    if (!hasMedia || !MEDIA.upcoming || !MEDIA.upcoming.length) return;
+    const section = $("#act-upcoming");
+    if (!section) return;
+    const grid = $("#upcomingGrid");
+    grid.innerHTML = MEDIA.upcoming.map(upcomingMarkup).join("");
+    MEDIA.upcoming.forEach((p) => applyDriveBackground($("#cardMedia-" + p.id), p.cover));
+    $$(".upcoming-card", grid).forEach((card) => {
+      card.addEventListener("click", () => {
+        const p = MEDIA.upcoming.find((x) => x.id === card.dataset.id);
+        openVideoModal(p.title, "", "Coming soon");
+      });
+    });
+  }
+
   /* ---------------- Video modal ---------------- */
-  function openVideoModal(driveId) {
+  function openVideoModal(title, driveId, statusText) {
     const modal = $("#videoModal");
     const stage = $("#videoModalStage");
     const embedUrl = hasMedia ? driveVideoEmbedUrl(driveId) : null;
-    stage.innerHTML = embedUrl
-      ? `<iframe src="${embedUrl}" allow="autoplay" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0;"></iframe>`
-      : `<div class="play-btn"><div class="play-tri"></div></div>`;
+    if (embedUrl) {
+      stage.innerHTML = `<iframe src="${embedUrl}" allow="autoplay" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0;"></iframe>`;
+    } else if (statusText) {
+      stage.innerHTML = `<span class="status-text">${statusText}</span>`;
+    } else {
+      stage.innerHTML = `<div class="play-btn"><div class="play-tri"></div></div>`;
+    }
+    if (title) $("#videoModalTitle").textContent = title;
     modal.hidden = false;
   }
 
   function initVideoModal() {
     const modal = $("#videoModal");
-    $("#chefCredit").addEventListener("click", () => { openVideoModal(hasMedia ? MEDIA.chefReel : null); });
+    $("#chefCredit").addEventListener("click", () => {
+      openVideoModal("Chronicles of a Chef — Ep. 4 \"Dil Se\"", hasMedia ? MEDIA.chefReel : "", "Work in progress");
+    });
     $("#closeVideoBtn").addEventListener("click", () => { modal.hidden = true; });
     $("#detailPlay") && $("#detailPlay").addEventListener("click", () => {
-      openVideoModal(activeDetailId ? projectMedia(activeDetailId).reel : null);
+      const p = PROJECTS.find((x) => x.id === activeDetailId);
+      openVideoModal(p ? p.title : "", activeDetailId ? projectMedia(activeDetailId).reel : "", "Work in progress");
     });
     modal.addEventListener("click", (e) => { if (e.target === modal) modal.hidden = true; });
   }
@@ -359,6 +418,7 @@
     initReveals();
     initParallax();
     initGallery();
+    initUpcoming();
     initVideoModal();
     initWaves();
     initStaticDriveMedia();

@@ -49,10 +49,10 @@
   <section id="act-hero" class="hero">
     <div class="wrap">
       <div class="hero-collage">
-        <div class="plate plate-a reveal-scale" data-parallax="0.06"><span>reel still — 2.39:1 · anamorphic night ext.</span></div>
+        <div class="plate plate-a reveal-scale" id="heroPlateA" data-parallax="0.06"><span>reel still — 2.39:1 · anamorphic night ext.</span></div>
         <div class="collage-col">
-          <div class="plate plate-b reveal-scale" data-parallax="0.1"><span>motion clip — grade a/b wipe</span></div>
-          <div class="plate plate-c reveal-scale"><span>texture plate — 16mm emulsion scan</span></div>
+          <div class="plate plate-b reveal-scale" id="heroPlateB" data-parallax="0.1"><span>motion clip — grade a/b wipe</span></div>
+          <div class="plate plate-c reveal-scale" id="heroPlateC"><span>texture plate — 16mm emulsion scan</span></div>
         </div>
       </div>
 
@@ -63,8 +63,8 @@
           <p>Raghul Karthic Sasikumar is a UAE-based multidisciplinary visual artist working across cinematography, editing, color and VFX. Three years of narrative, branded and live-event work.</p>
           <div class="btn btn-solid" data-target="act-work" data-cursor="magnetic">See the work <span>→</span></div>
         </div>
-        <div class="plate plate-d reveal-scale"><span>portrait — on set, dusk</span></div>
-        <div class="plate plate-e reveal-scale"></div>
+        <div class="plate plate-d reveal-scale" id="heroPlateD"><span>portrait — on set, dusk</span></div>
+        <div class="plate plate-e reveal-scale" id="heroPlateE"></div>
         <div class="stat-card reveal-scale">
           <span class="pulse-dot">● open for freelance</span>
           <span class="stat-num">3<span class="accent">yr</span></span>
@@ -132,7 +132,7 @@
 
       <div class="contact-sheet">
         <div class="contact-sheet-head"><span>Contact sheet — Double Or Nothing, day 3</span><span class="mint">12 / 36 keepers</span></div>
-        <div class="contact-grid">
+        <div class="contact-grid" id="contactGrid">
           <div class="frame"></div><div class="frame dim"></div><div class="frame keep"></div><div class="frame"></div>
           <div class="frame dim"></div><div class="frame tint"></div><div class="frame"></div><div class="frame dim"></div>
           <div class="frame"></div><div class="frame dim"></div><div class="frame"></div><div class="frame dim"></div>
@@ -142,11 +142,11 @@
       <div class="journal-row">
         <div class="journal-card">
           <div class="journal-card-label">Lighting diagram — Housewarming, int. night</div>
-          <div class="diagram"><span>scan of hand diagram</span></div>
+          <div class="diagram" id="journalDiagram"><span>scan of hand diagram</span></div>
           <p>Two 300d through frost, one bare bulb practical carrying the whole back third of the room. The diagram is wrong — we moved everything twice.</p>
         </div>
         <div class="journal-col">
-          <div class="bts-plate"><span>bts video — Double Or Nothing · dolly rehearsal, take 9</span></div>
+          <div class="bts-plate" id="journalBtsPlate"><span>bts video — Double Or Nothing · dolly rehearsal, take 9</span></div>
           <div class="journal-row-inner">
             <div class="take-card">
               <div class="take-title">Take <span class="mint">9</span> was the one</div>
@@ -205,11 +205,12 @@
       <h3>Chronicles of a Chef — Ep. 4 "Dil Se"</h3>
       <div class="close-btn" id="closeVideoBtn" data-cursor="magnetic">Close ✕</div>
     </div>
-    <div class="video-plate"><div class="play-btn"><div class="play-tri"></div></div></div>
+    <div class="video-plate" id="videoModalStage"><div class="play-btn"><div class="play-tri"></div></div></div>
     <p class="modal-sub">Best boy · episodic</p>
   </div>
 </div>
 
+<script src="media.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

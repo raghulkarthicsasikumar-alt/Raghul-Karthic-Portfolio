@@ -13,6 +13,9 @@
     { id: "dontleave", title: "Don't Leave", desc: "Sound recordist · color QC · short film", roles: ["colorist"], span: 7, size: "sm" }
   ];
 
+  const hasMedia = typeof MEDIA !== "undefined";
+  const projectMedia = (id) => (hasMedia && MEDIA.work[id]) || {};
+
   const $ = (sel, ctx = document) => ctx.querySelector(sel);
   const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -156,7 +159,7 @@
   function cardMarkup(p) {
     return `
       <div class="card" data-id="${p.id}" data-size="${p.size}" style="grid-column: span ${p.span};">
-        <div class="card-media">
+        <div class="card-media" id="cardMedia-${p.id}">
           <span class="card-plate-label">key still — 2.39:1</span>
           <span class="card-tag">view project →</span>
         </div>
@@ -171,6 +174,9 @@
     const list = filter === "all" ? PROJECTS : PROJECTS.filter((p) => p.roles.includes(filter));
     gallery.innerHTML = list.map(cardMarkup).join("");
     attachCardEvents();
+    if (hasMedia) {
+      list.forEach((p) => applyDriveBackground($("#cardMedia-" + p.id), projectMedia(p.id).cover));
+    }
   }
 
   function attachCardEvents() {
@@ -179,21 +185,26 @@
     });
   }
 
+  let activeDetailId = null;
+
   function openDetail(id) {
     const p = PROJECTS.find((x) => x.id === id);
     if (!p) return;
+    activeDetailId = id;
     $("#mainView").hidden = true;
     const detail = $("#detailView");
     detail.hidden = false;
     $("#detailKind").textContent = p.roles.includes("colorist") ? "Colorist project" : p.roles.includes("dp") ? "Director / DP project" : "Editorial project";
     $("#detailTitle").textContent = p.title;
     $("#detailDesc").textContent = p.desc;
-    $("#detailMedia").innerHTML = `
-      <div class="plate-block" style="flex:3 1 min(100%,360px); aspect-ratio:16/9;"></div>
-      <div class="plate-block" style="flex:2 1 min(100%,220px); aspect-ratio:16/9;"></div>
-      <div class="plate-block" style="flex:2 1 min(100%,200px); aspect-ratio:16/9;"></div>
-      <div class="plate-block" style="flex:4 1 min(100%,400px); aspect-ratio:16/9;"></div>
-      <div class="plate-block" style="flex:1 1 min(100%,160px); aspect-ratio:16/9;"></div>`;
+    const stills = projectMedia(id).stills || [];
+    const flexes = ["3 1 min(100%,360px)", "2 1 min(100%,220px)", "2 1 min(100%,200px)", "4 1 min(100%,400px)", "1 1 min(100%,160px)"];
+    $("#detailMedia").innerHTML = flexes
+      .map((flex, i) => `<div class="plate-block" id="detailMedia-${i}" style="flex:${flex}; aspect-ratio:16/9;"></div>`)
+      .join("");
+    if (hasMedia) {
+      flexes.forEach((_, i) => applyDriveBackground($("#detailMedia-" + i), stills[i]));
+    }
     window.scrollTo({ top: 0, behavior: "auto" });
     requestAnimationFrame(() => $$(".reveal-up, .reveal-scale", detail).forEach((el) => el.classList.add("in-view")));
   }
@@ -218,11 +229,23 @@
   }
 
   /* ---------------- Video modal ---------------- */
+  function openVideoModal(driveId) {
+    const modal = $("#videoModal");
+    const stage = $("#videoModalStage");
+    const embedUrl = hasMedia ? driveVideoEmbedUrl(driveId) : null;
+    stage.innerHTML = embedUrl
+      ? `<iframe src="${embedUrl}" allow="autoplay" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0;"></iframe>`
+      : `<div class="play-btn"><div class="play-tri"></div></div>`;
+    modal.hidden = false;
+  }
+
   function initVideoModal() {
     const modal = $("#videoModal");
-    $("#chefCredit").addEventListener("click", () => { modal.hidden = false; });
+    $("#chefCredit").addEventListener("click", () => { openVideoModal(hasMedia ? MEDIA.chefReel : null); });
     $("#closeVideoBtn").addEventListener("click", () => { modal.hidden = true; });
-    $("#detailPlay") && $("#detailPlay").addEventListener("click", () => { modal.hidden = false; });
+    $("#detailPlay") && $("#detailPlay").addEventListener("click", () => {
+      openVideoModal(activeDetailId ? projectMedia(activeDetailId).reel : null);
+    });
     modal.addEventListener("click", (e) => { if (e.target === modal) modal.hidden = true; });
   }
 
@@ -315,6 +338,19 @@
     requestAnimationFrame(frame);
   }
 
+  /* ---------------- Drive media for hero + journal ---------------- */
+  function initStaticDriveMedia() {
+    if (!hasMedia) return;
+    applyDriveBackground($("#heroPlateA"), MEDIA.hero.plateA);
+    applyDriveBackground($("#heroPlateB"), MEDIA.hero.plateB);
+    applyDriveBackground($("#heroPlateC"), MEDIA.hero.plateC);
+    applyDriveBackground($("#heroPlateD"), MEDIA.hero.plateD);
+    applyDriveBackground($("#heroPlateE"), MEDIA.hero.plateE);
+    applyDriveBackground($("#journalDiagram"), MEDIA.journal.diagram);
+    applyDriveBackground($("#journalBtsPlate"), MEDIA.journal.btsPlate);
+    $$("#contactGrid .frame").forEach((el, i) => applyDriveBackground(el, MEDIA.journal.contactSheet[i]));
+  }
+
   /* ---------------- boot ---------------- */
   document.addEventListener("DOMContentLoaded", () => {
     initCursor();
@@ -325,5 +361,6 @@
     initGallery();
     initVideoModal();
     initWaves();
+    initStaticDriveMedia();
   });
 })();

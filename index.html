@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Raghul Karthic Sasikumar — Cinematography · Color · Craft</title>
+<meta name="description" content="Raghul Karthic Sasikumar — UAE-based cinematographer, colorist, editor and VFX artist.">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Montserrat:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<div class="bg-fixed"></div>
+<canvas id="bg-waves"></canvas>
+<div class="grain"></div>
+
+<header class="site-header" id="siteHeader">
+  <div class="header-inner">
+    <div class="logo" data-cursor="magnetic" id="logoBtn">RAGHUL<span class="accent">.</span></div>
+    <nav class="nav">
+      <div class="nav-link" data-target="act-hero" data-cursor="magnetic">Work<span class="nav-underline"></span></div>
+      <div class="nav-link" data-target="act-manifesto" data-cursor="magnetic">About<span class="nav-underline"></span></div>
+      <div class="nav-link" data-target="act-journal" data-cursor="magnetic">Journal<span class="nav-underline"></span></div>
+      <div class="nav-link" data-target="act-contact" data-cursor="magnetic">Contact<span class="nav-underline"></span></div>
+    </nav>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+</header>
+
+<main id="mainView">
+
+  <section id="act-intro" class="intro">
+    <div class="intro-sticky">
+      <div class="intro-grid"></div>
+      <div class="intro-scanline"></div>
+      <div class="intro-word" id="introWord">
+        <span data-i="0">R</span><span data-i="1" class="accent">A</span><span data-i="2">G</span><span data-i="3">H</span><span data-i="4">U</span><span data-i="5">L</span>
+      </div>
+      <div class="intro-sub" id="introSub">Cinematography · Color · Craft</div>
+      <div class="intro-cta">
+        <button class="btn btn-solid" data-target="act-hero" data-cursor="magnetic">Skip to work →</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="act-hero" class="hero">
+    <div class="wrap">
+      <div class="hero-collage">
+        <div class="plate plate-a reveal-scale" data-parallax="0.06"><span>reel still — 2.39:1 · anamorphic night ext.</span></div>
+        <div class="collage-col">
+          <div class="plate plate-b reveal-scale" data-parallax="0.1"><span>motion clip — grade a/b wipe</span></div>
+          <div class="plate plate-c reveal-scale"><span>texture plate — 16mm emulsion scan</span></div>
+        </div>
+      </div>
+
+      <h1 class="hero-title reveal-up"><span class="split">Light <span class="accent">bends</span> for a living</span></h1>
+
+      <div class="hero-row">
+        <div class="hero-copy reveal-up">
+          <p>Raghul Karthic Sasikumar is a UAE-based multidisciplinary visual artist working across cinematography, editing, color and VFX. Three years of narrative, branded and live-event work.</p>
+          <div class="btn btn-solid" data-target="act-work" data-cursor="magnetic">See the work <span>→</span></div>
+        </div>
+        <div class="plate plate-d reveal-scale"><span>portrait — on set, dusk</span></div>
+        <div class="plate plate-e reveal-scale"></div>
+        <div class="stat-card reveal-scale">
+          <span class="pulse-dot">● open for freelance</span>
+          <span class="stat-num">3<span class="accent">yr</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="marquee">
+      <div class="marquee-track">
+        <span>Director</span><span class="accent">·</span><span>Cinematographer</span><span class="mint">·</span><span>Colorist</span><span class="accent">·</span><span>Editor</span><span class="mint">·</span><span>Sound Designer</span><span class="accent">·</span><span>VFX Artist</span><span class="mint">·</span><span>Storyboard Artist</span><span class="accent">·</span>
+        <span>Director</span><span class="accent">·</span><span>Cinematographer</span><span class="mint">·</span><span>Colorist</span><span class="accent">·</span><span>Editor</span><span class="mint">·</span><span>Sound Designer</span><span class="accent">·</span><span>VFX Artist</span><span class="mint">·</span><span>Storyboard Artist</span><span class="accent">·</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="act-manifesto" class="manifesto">
+    <div class="wrap wrap-narrow">
+      <span class="eyebrow">Manifesto · 001</span>
+      <h2 class="reveal-up">A frame is an <span class="mint">argument</span></h2>
+      <div class="manifesto-grid">
+        <p>I don't believe in neutral images. Every exposure decision is a claim about what deserves attention and what can be allowed to fall away into the dark. The grade is where that claim becomes <span class="mint">undeniable</span>.</p>
+        <p>So I work backwards from the argument. Lens, movement, palette, cut — none of it is style for its own sake. If a choice can't defend itself in the edit, it leaves. What survives is the only thing worth showing you.</p>
+      </div>
+      <div class="pull-quote"><p>Make it specific or don't make it.</p></div>
+      <div class="fact-grid">
+        <div class="fact"><div class="fact-label">Based</div><div class="fact-val">Dubai, UAE</div></div>
+        <div class="fact"><div class="fact-label">Cameras</div><div class="fact-val">BMPCC 4K/6K · URSA Mini Pro 6K · Sony FX3/FX6 · RED Komodo</div></div>
+        <div class="fact"><div class="fact-label">Suite</div><div class="fact-val">DaVinci Resolve · Adobe Suite · Blender</div></div>
+        <div class="fact"><div class="fact-label mint">Status</div><div class="fact-val mint">Open for freelance work</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="act-work" class="work">
+    <div class="wrap">
+      <div class="work-head">
+        <h2 class="reveal-up">Selected<br /><span class="accent">work</span></h2>
+        <div class="filters">
+          <div class="filter-btn active" data-filter="all" data-cursor="magnetic">All 09</div>
+          <div class="filter-btn" data-filter="colorist" data-cursor="magnetic">Colorist</div>
+          <div class="filter-btn" data-filter="dp" data-cursor="magnetic">DP</div>
+          <div class="filter-btn" data-filter="editor" data-cursor="magnetic">Editor/VFX</div>
+        </div>
+      </div>
+      <div class="filter-label">Filter: <span id="filterLabel">All</span> — click any project for stills &amp; the reel</div>
+
+      <div class="gallery" id="gallery"></div>
+
+      <div class="credit-line" id="chefCredit" data-cursor="magnetic">+ Best Boy on <span class="accent">Chronicles of a Chef — Ep. 4 "Dil Se"</span> ↗</div>
+    </div>
+  </section>
+
+  <section id="act-journal" class="journal">
+    <div class="wrap">
+      <span class="eyebrow">Journal · raw process · unpolished on purpose</span>
+      <h2 class="reveal-up">Behind<br />the <span class="mint">mess</span></h2>
+      <p class="journal-intro">Contact sheets, blown takes, lighting diagrams scrawled at 3am. Nothing here is a case study. It's the evidence.</p>
+
+      <div class="tag-row">
+        <span class="tag tag-solid">Double Or Nothing</span>
+        <span class="tag">Housewarming</span>
+        <span class="tag">Kaise Main Batau</span>
+        <span class="tag tag-mint">Red Light Shadows</span>
+      </div>
+
+      <div class="contact-sheet">
+        <div class="contact-sheet-head"><span>Contact sheet — Double Or Nothing, day 3</span><span class="mint">12 / 36 keepers</span></div>
+        <div class="contact-grid">
+          <div class="frame"></div><div class="frame dim"></div><div class="frame keep"></div><div class="frame"></div>
+          <div class="frame dim"></div><div class="frame tint"></div><div class="frame"></div><div class="frame dim"></div>
+          <div class="frame"></div><div class="frame dim"></div><div class="frame"></div><div class="frame dim"></div>
+        </div>
+      </div>
+
+      <div class="journal-row">
+        <div class="journal-card">
+          <div class="journal-card-label">Lighting diagram — Housewarming, int. night</div>
+          <div class="diagram"><span>scan of hand diagram</span></div>
+          <p>Two 300d through frost, one bare bulb practical carrying the whole back third of the room. The diagram is wrong — we moved everything twice.</p>
+        </div>
+        <div class="journal-col">
+          <div class="bts-plate"><span>bts video — Double Or Nothing · dolly rehearsal, take 9</span></div>
+          <div class="journal-row-inner">
+            <div class="take-card">
+              <div class="take-title">Take <span class="mint">9</span> was the one</div>
+              <p>Takes 1–8 are in here too. The failures explain the frame better than the frame does.</p>
+            </div>
+            <div class="frame-block"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="act-contact" class="contact">
+    <div class="wrap wrap-narrow">
+      <span class="eyebrow eyebrow-dark">● Open for freelance &amp; internships</span>
+      <h2 class="reveal-up dark">Let's<br />work together</h2>
+      <p class="contact-copy">Open to freelance camera, post and color work. Reach out directly — no brief required, we'll figure out the details together.</p>
+      <a href="mailto:raghulkarthicsasikumar@gmail.com?subject=Let's%20work%20together" class="btn btn-cta" data-cursor="magnetic">Email Raghul →</a>
+      <div class="contact-grid-meta">
+        <div><div class="meta-label">Direct</div><a href="mailto:raghulkarthicsasikumar@gmail.com">raghulkarthicsasikumar@gmail.com</a></div>
+        <div><div class="meta-label">Phone</div><div>+971 52 502 2949</div></div>
+        <div><div class="meta-label">Location</div><div>Dubai, UAE</div></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<section id="detailView" class="detail" hidden>
+  <div class="wrap wrap-narrow">
+    <div class="back-link" id="backBtn" data-cursor="magnetic">← Back to work</div>
+    <div>
+      <span class="eyebrow" id="detailKind">Project</span>
+      <h2 class="reveal-up" id="detailTitle">Title</h2>
+      <p class="detail-desc" id="detailDesc">Description</p>
+    </div>
+    <div class="detail-media" id="detailMedia"></div>
+    <div class="detail-reel">
+      <span class="eyebrow mint">Watch the reel</span>
+      <div class="video-plate" id="detailPlay" data-cursor="magnetic"><div class="play-btn"><div class="play-tri"></div></div></div>
+      <a href="#" class="watch-label">Full reel ↗</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <span>Raghul — cinematography · color · craft</span>
+    <span>Black Bean · Urban Red · Ethereal Green</span>
+  </div>
+</footer>
+
+<div class="video-modal" id="videoModal" hidden>
+  <div class="video-modal-inner">
+    <div class="video-modal-head">
+      <h3>Chronicles of a Chef — Ep. 4 "Dil Se"</h3>
+      <div class="close-btn" id="closeVideoBtn" data-cursor="magnetic">Close ✕</div>
+    </div>
+    <div class="video-plate"><div class="play-btn"><div class="play-tri"></div></div></div>
+    <p class="modal-sub">Best boy · episodic</p>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

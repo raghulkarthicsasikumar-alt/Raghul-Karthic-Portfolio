@@ -1,0 +1,319 @@
+(() => {
+  "use strict";
+
+  const PROJECTS = [
+    { id: "don", title: "Double Or Nothing", desc: "Writer · Director · DP · Editor · Colorist · Sound Designer — short film", roles: ["dp"], span: 7, size: "lg", tag: "Writer · Director · DP" },
+    { id: "swey", title: "SWEY: See the World, See Yourself", desc: "Colorist · spec ad for Swey Collective · 2025", roles: ["colorist"], span: 5, size: "md" },
+    { id: "iow", title: "In Other Words, I Loved You", desc: "Storyboard artist · assembly editor", roles: ["editor"], span: 4, size: "sm" },
+    { id: "kmb", title: "Kaise Main Batau", desc: "Colorist · VFX assistant · camera operator · for Dhi Harmony · 2025", roles: ["colorist"], span: 8, size: "md" },
+    { id: "house", title: "Housewarming", desc: "DOP · colorist · sound designer · short film", roles: ["dp"], span: 6, size: "lg" },
+    { id: "rls", title: "Red Light Shadows", desc: "VFX artist · short film", roles: ["editor"], span: 3, size: "sm" },
+    { id: "waiting", title: "The Waiting Room", desc: "Colorist · short film", roles: ["colorist"], span: 3, size: "sm" },
+    { id: "keeta", title: "Keeta — Spec Ad", desc: "Production designer · storyboard artist", roles: ["editor"], span: 5, size: "sm" },
+    { id: "dontleave", title: "Don't Leave", desc: "Sound recordist · color QC · short film", roles: ["colorist"], span: 7, size: "sm" }
+  ];
+
+  const $ = (sel, ctx = document) => ctx.querySelector(sel);
+  const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------------- Custom cursor ---------------- */
+  function initCursor() {
+    const isCoarse = window.matchMedia("(pointer: coarse)").matches;
+    if (isCoarse) return;
+    document.documentElement.classList.add("has-cursor");
+    const dot = $("#cursorDot");
+    const ring = $("#cursorRing");
+    let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+    let rx = mx, ry = my;
+
+    window.addEventListener("mousemove", (e) => {
+      mx = e.clientX; my = e.clientY;
+      dot.style.transform = `translate(${mx}px, ${my}px) translate(-50%, -50%)`;
+    }, { passive: true });
+
+    function raf() {
+      rx += (mx - rx) * 0.18;
+      ry += (my - ry) * 0.18;
+      ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%, -50%)`;
+      requestAnimationFrame(raf);
+    }
+    raf();
+
+    document.addEventListener("mouseover", (e) => {
+      if (e.target.closest("[data-cursor='magnetic'], a, .card, .credit-line, .video-plate")) {
+        ring.classList.add("hover");
+      }
+    });
+    document.addEventListener("mouseout", (e) => {
+      if (e.target.closest("[data-cursor='magnetic'], a, .card, .credit-line, .video-plate")) {
+        ring.classList.remove("hover");
+      }
+    });
+
+    // magnetic pull on buttons/nav
+    $$("[data-cursor='magnetic']").forEach((el) => {
+      el.addEventListener("mousemove", (e) => {
+        const r = el.getBoundingClientRect();
+        const relX = e.clientX - (r.left + r.width / 2);
+        const relY = e.clientY - (r.top + r.height / 2);
+        el.style.transform = `translate(${relX * 0.18}px, ${relY * 0.28}px)`;
+      });
+      el.addEventListener("mouseleave", () => { el.style.transform = ""; });
+    });
+  }
+
+  /* ---------------- Smooth in-page scroll ---------------- */
+  function scrollToId(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const headerH = $(".site-header").offsetHeight;
+    const top = el.getBoundingClientRect().top + window.scrollY - headerH + 1;
+    window.scrollTo({ top, behavior: prefersReducedMotion ? "auto" : "smooth" });
+  }
+
+  function initNavAndSmoothScroll() {
+    $$("[data-target]").forEach((el) => {
+      el.addEventListener("click", () => scrollToId(el.dataset.target));
+    });
+    $("#logoBtn").addEventListener("click", () => window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" }));
+  }
+
+  /* ---------------- Scroll progress + active nav + kinetic intro ---------------- */
+  function initScrollFx() {
+    const progressFill = $("#progressFill");
+    const introWord = $("#introWord");
+    const introSub = $("#introSub");
+    const letters = $$("#introWord span");
+    const introSection = $("#act-intro");
+    const navLinks = $$(".nav-link");
+    const sections = ["act-hero", "act-manifesto", "act-work", "act-journal", "act-contact"].map((id) => document.getElementById(id));
+
+    let ticking = false;
+    function update() {
+      ticking = false;
+      const doc = document.documentElement;
+      const scrollTop = window.scrollY;
+      const max = doc.scrollHeight - doc.clientHeight;
+      const pct = max > 0 ? Math.min(1, scrollTop / max) : 0;
+      progressFill.style.width = (pct * 100).toFixed(2) + "%";
+
+      // kinetic intro: progress through the intro section's sticky range
+      const introH = introSection.offsetHeight - window.innerHeight;
+      const introProgress = introH > 0 ? Math.min(1, Math.max(0, scrollTop / introH)) : 0;
+      letters.forEach((span, i) => {
+        const delay = i * 0.06;
+        const local = Math.min(1, Math.max(0, (introProgress - delay) / 0.5));
+        const y = (1 - local) * 40;
+        const rot = (1 - local) * (i % 2 === 0 ? -6 : 6);
+        span.style.transform = `translateY(${y}px) rotate(${rot}deg)`;
+      });
+      introSub.style.opacity = Math.min(1, introProgress * 2.2).toFixed(2);
+
+      // active nav section highlight
+      const headerH = $(".site-header").offsetHeight;
+      let activeId = null;
+      for (const sec of sections) {
+        if (!sec) continue;
+        const r = sec.getBoundingClientRect();
+        if (r.top - headerH <= window.innerHeight * 0.4 && r.bottom > headerH) {
+          activeId = sec.id;
+        }
+      }
+      navLinks.forEach((l) => l.classList.toggle("active", l.dataset.target === activeId));
+    }
+
+    function onScroll() {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    update();
+  }
+
+  /* ---------------- Reveal on scroll (IntersectionObserver) ---------------- */
+  function initReveals() {
+    const targets = $$(".reveal-up, .reveal-scale");
+    if (!("IntersectionObserver" in window) || prefersReducedMotion) {
+      targets.forEach((el) => el.classList.add("in-view"));
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("in-view");
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: "0px 0px -8% 0px" });
+    targets.forEach((el) => io.observe(el));
+  }
+
+  /* ---------------- Parallax plates ---------------- */
+  function initParallax() {
+    if (prefersReducedMotion) return;
+    const els = $$("[data-parallax]");
+    if (!els.length) return;
+    let ticking = false;
+    function update() {
+      ticking = false;
+      els.forEach((el) => {
+        const speed = parseFloat(el.dataset.parallax) || 0.08;
+        const r = el.getBoundingClientRect();
+        const center = r.top + r.height / 2 - window.innerHeight / 2;
+        el.style.transform = `translateY(${(-center * speed).toFixed(2)}px)`;
+      });
+    }
+    window.addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+    update();
+  }
+
+  /* ---------------- Gallery + project detail ---------------- */
+  function cardMarkup(p) {
+    return `
+      <div class="card" data-id="${p.id}" data-size="${p.size}" style="grid-column: span ${p.span};">
+        <div class="card-media">
+          <span class="card-plate-label">key still — 2.39:1</span>
+          <span class="card-tag">view project →</span>
+        </div>
+        ${p.tag ? `<div class="card-role">${p.tag}</div>` : ""}
+        <h3>${p.title}</h3>
+        <p>${p.desc}</p>
+      </div>`;
+  }
+
+  function renderGallery(filter) {
+    const gallery = $("#gallery");
+    const list = filter === "all" ? PROJECTS : PROJECTS.filter((p) => p.roles.includes(filter));
+    gallery.innerHTML = list.map(cardMarkup).join("");
+    attachCardEvents();
+  }
+
+  function attachCardEvents() {
+    $$(".card").forEach((card) => {
+      card.addEventListener("click", () => openDetail(card.dataset.id));
+    });
+  }
+
+  function openDetail(id) {
+    const p = PROJECTS.find((x) => x.id === id);
+    if (!p) return;
+    $("#mainView").hidden = true;
+    const detail = $("#detailView");
+    detail.hidden = false;
+    $("#detailKind").textContent = p.roles.includes("colorist") ? "Colorist project" : p.roles.includes("dp") ? "Director / DP project" : "Editorial project";
+    $("#detailTitle").textContent = p.title;
+    $("#detailDesc").textContent = p.desc;
+    $("#detailMedia").innerHTML = `
+      <div class="plate-block" style="flex:3 1 min(100%,360px); aspect-ratio:3/2;"></div>
+      <div class="plate-block" style="flex:2 1 min(100%,220px); aspect-ratio:4/5;"></div>
+      <div class="plate-block" style="flex:2 1 min(100%,200px); aspect-ratio:1/1;"></div>
+      <div class="plate-block" style="flex:4 1 min(100%,400px); aspect-ratio:16/9;"></div>
+      <div class="plate-block" style="flex:1 1 min(100%,160px); aspect-ratio:3/4;"></div>`;
+    window.scrollTo({ top: 0, behavior: "auto" });
+    requestAnimationFrame(() => $$(".reveal-up, .reveal-scale", detail).forEach((el) => el.classList.add("in-view")));
+  }
+
+  function closeDetail() {
+    $("#detailView").hidden = true;
+    $("#mainView").hidden = false;
+  }
+
+  function initGallery() {
+    renderGallery("all");
+    $$(".filter-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        $$(".filter-btn").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        const f = btn.dataset.filter;
+        $("#filterLabel").textContent = btn.textContent.replace(/\s*\d+$/, "").trim();
+        renderGallery(f);
+      });
+    });
+    $("#backBtn").addEventListener("click", closeDetail);
+  }
+
+  /* ---------------- Video modal ---------------- */
+  function initVideoModal() {
+    const modal = $("#videoModal");
+    $("#chefCredit").addEventListener("click", () => { modal.hidden = false; });
+    $("#closeVideoBtn").addEventListener("click", () => { modal.hidden = true; });
+    $("#detailPlay") && $("#detailPlay").addEventListener("click", () => { modal.hidden = false; });
+    modal.addEventListener("click", (e) => { if (e.target === modal) modal.hidden = true; });
+  }
+
+  /* ---------------- Background wave canvas (mouse-reactive) ---------------- */
+  function initWaves() {
+    const canvas = $("#bg-waves");
+    const ctx = canvas.getContext("2d");
+    let mouse = { x: -9999, y: -9999 };
+    let lastMove = 0;
+
+    function resize() {
+      const w = window.innerWidth, h = document.documentElement.scrollHeight;
+      if (canvas.width !== w || canvas.height !== h) {
+        canvas.width = w;
+        canvas.height = h;
+        canvas.style.height = h + "px";
+      }
+    }
+    window.addEventListener("resize", resize);
+    resize();
+    setInterval(resize, 1500);
+
+    window.addEventListener("mousemove", (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY + window.scrollY;
+      lastMove = performance.now();
+    }, { passive: true });
+
+    let t = 0, speed = 0.18;
+    const bandColorA = "217,21,58";
+    const bandColorB = "150,180,140";
+
+    function frame() {
+      requestAnimationFrame(frame);
+      if (prefersReducedMotion) return;
+      const w = canvas.width, h = canvas.height;
+      if (!w || !h) return;
+      const active = performance.now() - lastMove < 1200;
+      const target = active ? 1 : 0.18;
+      speed += (target - speed) * 0.04;
+      t += (1 / 60) * speed;
+
+      ctx.clearRect(0, 0, w, h);
+      const bandCount = Math.max(4, Math.ceil(h / 420));
+      for (let i = 0; i < bandCount; i++) {
+        const baseY = (i + 0.5) * (h / bandCount);
+        const color = i % 2 === 0 ? bandColorA : bandColorB;
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(${color},${0.12 + (i % 3) * 0.03})`;
+        ctx.lineWidth = 1.4;
+        const step = 24;
+        for (let x = 0; x <= w; x += step) {
+          const distToMouse = Math.hypot(x - mouse.x, baseY - mouse.y);
+          const mouseInfluence = Math.max(0, 1 - distToMouse / 420) * 26;
+          const y = baseY
+            + Math.sin(x * 0.006 + t * 1.4 + i) * 18
+            + Math.sin(x * 0.002 - t * 0.6 + i * 2) * 30
+            - mouseInfluence;
+          if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  /* ---------------- boot ---------------- */
+  document.addEventListener("DOMContentLoaded", () => {
+    initCursor();
+    initNavAndSmoothScroll();
+    initScrollFx();
+    initReveals();
+    initParallax();
+    initGallery();
+    initVideoModal();
+    initWaves();
+  });
+})();
